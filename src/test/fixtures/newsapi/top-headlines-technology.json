@@ -1,0 +1,45 @@
+{
+  "status": "ok",
+  "totalResults": 62,
+  "articles": [
+    {
+      "source": {
+        "id": null,
+        "name": "9to5google.com"
+      },
+      "author": "Abner Li",
+      "title": "Chromecast with Google TV gets first update of 2026 - 9to5Google",
+      "description": "Following the last release 11 months ago, Google is rolling out the first update of 2026 to the Chromecast with Google TV (4K).",
+      "url": "http://9to5google.com/2026/10/12/chromecast-google-tv-2026-update/",
+      "urlToImage": "https://9to5google.com/wp-content/uploads/sites/4/2024/07/Chromecast-with-Google-TV-v7.jpg?quality=82&strip=all&resize=1200,628",
+      "publishedAt": "2026-10-12T17:49:00Z",
+      "content": "Following the last release 11 months ago, Google is rolling out the first update of 2026 to the Chromecast with Google TV (4K).\r\nAccording to Googles release notes, UTTA.260813.002 is rolling out jus… [+470 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "9to5google.com"
+      },
+      "author": "Andrew Romero",
+      "title": "Google’s Fitbit Air is getting a shiny new Metal Mesh band and better automatic tracking - 9to5Google",
+      "description": "The Fitbit Air is finally getting another band option that isn’t fabric or polyurethane. Instead, the Metal Mesh band might...",
+      "url": "http://9to5google.com/2026/10/12/fitbit-air-gets-metal-mesh-band-and-upgrades/",
+      "urlToImage": "https://9to5google.com/wp-content/uploads/sites/4/2026/10/Fitbit-Air-metal-mesh-band.jpg?quality=82&strip=all&resize=1200,628",
+      "publishedAt": "2026-10-12T16:38:00Z",
+      "content": "The Fitbit Air is finally getting another band option that isn’t fabric or polyurethane. Instead, the Metal Mesh band might actually take the Fitbit Air up a notch.\r\nBand selection for the Fitbit Air… [+2955 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "GamesIndustry.biz"
+      },
+      "author": "Vikki Blake",
+      "title": "Nvidia reportedly ends GeForce RTX 5090 graphics card production - GamesIndustry.biz",
+      "description": "Nvidia has reportedly stopped manufacturing the GeForce RTX 5090, including the D variants made for the Chinese market.",
+      "url": "https://www.gamesindustry.biz/nvidia-reportedly-ends-geforce-rtx-5090-graphics-card-production",
+      "urlToImage": "https://assetsio.gnwcdn.com/nvidia_ctHUg28.jpg?width=1200&height=630&fit=crop&enable=upscale&auto=webp",
+      "publishedAt": "2026-10-12T16:17:15Z",
+      "content": "Nvidia has reportedly stopped manufacturing the GeForce RTX 5090, including the D variants made for the Chinese market.\r\nThe claim comes from a leaked notice from an unnamed factory, shared by leaker… [+1233 chars]"
+    }
+  ]
+}

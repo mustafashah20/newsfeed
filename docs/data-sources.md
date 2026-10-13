@@ -17,7 +17,7 @@ Newsfeed reads from three APIs. All are free with a key; treat their limits as h
 | Author | `author` (often null) | `fields.byline` | `byline.original` ("By …") |
 | Image | `urlToImage` | `fields.thumbnail` (small); larger via `show-elements=image` | `multimedia` (see below) |
 | Native id (`externalId`) | article `url` (no id field) | `id` (e.g. `football/2024/oct/13/slug`, contains slashes) | `_id` |
-| Text for the reader | `description` + `content` (**truncated** to ~200 chars, ends with `[+N chars]`) | **Full body** via `show-fields=body` | `abstract` + `lead_paragraph` only |
+| Text for the reader | `description` + `content` (**truncated** to ~200 chars, ends with `[+N chars]`) | **Full body** via `show-fields=body` | `abstract` only (`snippet` duplicates it; no `lead_paragraph`) |
 | Single-article endpoint | none | `GET /{id}?show-fields=body,byline,thumbnail,trailText` → `response.content` | `GET /articlesearch.json?fq=_id:"<_id>"` → `response.docs[0]` (preview fields only) |
 
 ## Gotchas (all must be handled)
@@ -30,6 +30,9 @@ Newsfeed reads from three APIs. All are free with a key; treat their limits as h
 - Clamp `from` to today − 30 days, and show an inline note in the date filter when NewsAPI is selected.
 - Error body: `{ status: "error", code, message }`. Map `code` into `ApiError`.
 - `content` ends with a marker like `… [+3412 chars]`; strip it before using the text as `excerpt`.
+- The free (Developer) plan serves only the first 100 results of a query (deeper pages fail with `maximumResultsReached`), so `hasMore` stops at `min(totalResults, 100)`.
+- A page can hold fewer items than `pageSize` even when more exist (`pageSize=5` returned 4 of `totalResults: 35`), so compute `hasMore` as `page * pageSize < totalResults`, never from a short page.
+- `author`, `description`, `urlToImage` and `content` can all be null on the same item (fixture `newsapi/top-headlines.json`, item 3); `source.id` is often null.
 
 **Guardian**
 - Always send `show-fields=trailText,thumbnail,byline`, or there is no description, image or author.
@@ -42,11 +45,12 @@ Newsfeed reads from three APIs. All are free with a key; treat their limits as h
 **NYT**
 - 5 requests per minute: long `staleTime`, no retries on 429, submit-only search.
 - `page` is 0-based; the app is 1-based. Convert in the adapter only.
-- Verify the `fq` field name with one real request (current docs use `section.name`; older examples use `section_name`) and lock it into the fixture.
-- `multimedia` has two known shapes: an array of objects with relative `url`, or an object with `default`/`thumbnail`. Support both; prefix relative URLs with `https://www.nytimes.com/`.
+- Category filter is **`fq=section.name:("Technology" "Science")`** (verified 2026-10-14, fixture `nyt/articlesearch-sections.json`). The response field is still named `section_name`.
+- `multimedia` in current responses is an object `{ caption, credit, default: { url, width, height }, thumbnail }` with absolute URLs (all docs captured). Older responses used an array of objects with relative `url`: support both, prefixing relative URLs with `https://www.nytimes.com/`.
+- `metadata.hits` caps at 10000; together with the 100-page limit, compute `hasMore` from `offset + docs.length < min(hits, 1010)`.
 - `byline.original` starts with "By "; normalize it.
-- No full text: the in-app reader shows `abstract` + `lead_paragraph` with a preview notice and no "Continue reading" button.
-- Lookup by id for direct loads/shared links: `fq=_id:"<_id>"` (ids look like `nyt://article/<uuid>`; quote and URL-encode them). Verify the query with one real request and lock it into a fixture. Costs one of the 5 req/min, so the reader skips it when a preview is already cached. An empty `docs` array → `ReaderUnavailable`.
+- No full text: the in-app reader shows `abstract` with a preview notice and no "Continue reading" button. `lead_paragraph` is absent from current responses (0 of 10 docs, 2026-10-14) and `snippet` equals `abstract`, so the mapper uses `abstract` as `description` and sets `excerpt: null`. Keep `lead_paragraph` optional in the schema in case it returns.
+- Lookup by id for direct loads/shared links: `fq=_id:"<_id>"` (ids look like `nyt://article/<uuid>`; quote and URL-encode them). Verified 2026-10-14: returns exactly one doc (fixture `nyt/article-by-id.json`). Costs one of the 5 req/min, so the reader skips it when a preview is already cached. An empty `docs` array → `ReaderUnavailable`.
 
 **NewsAPI** has no lookup by id: a NewsAPI article opened directly (refresh, shared link) with nothing cached shows `ReaderUnavailable`.
 

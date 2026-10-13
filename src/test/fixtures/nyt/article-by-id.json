@@ -1,0 +1,64 @@
+{
+  "status": "OK",
+  "copyright": "Copyright (c) 2026 The New York Times Company. All Rights Reserved.",
+  "response": {
+    "docs": [
+      {
+        "abstract": "It can take years to create, and then weather and wars can upend all the planning.",
+        "byline": {
+          "original": "By Phillip Horton"
+        },
+        "document_type": "article",
+        "headline": {
+          "main": "The Complicated Puzzle of the Formula 1 Schedule",
+          "kicker": "",
+          "print_headline": "Solving a Formula 1 puzzle"
+        },
+        "_id": "nyt://article/e14886a8-b46b-5893-932d-8e8bd535218f",
+        "keywords": [
+          {
+            "name": "Subject",
+            "value": "Automobile Racing",
+            "rank": 1
+          },
+          {
+            "name": "Organization",
+            "value": "Formula One",
+            "rank": 2
+          }
+        ],
+        "multimedia": {
+          "caption": "Clockwise from top left: Oscar Piastri of Australia driving during F1 testing in December in Abu Dhabi; the Monaco Grand Prix in Monte Carlo in June; the Singapore Grand Prix last October; and Charles Leclerc for Ferrari in the lead during the Grand Prix of Azerbaijan in September.",
+          "credit": "Getty",
+          "default": {
+            "url": "https://static01.nyt.com/images/2026/10/10/multimedia/10sp-singapore-schedule-grid/10sp-singapore-schedule-grid-articleLarge.jpg",
+            "height": 400,
+            "width": 600
+          },
+          "thumbnail": {
+            "url": "https://static01.nyt.com/images/2026/10/10/multimedia/10sp-singapore-schedule-grid/10sp-singapore-schedule-grid-thumbStandard.jpg",
+            "height": 75,
+            "width": 75
+          }
+        },
+        "news_desk": "SpecialSections",
+        "print_page": "13",
+        "print_section": "A",
+        "pub_date": "2026-10-13T14:15:19Z",
+        "section_name": "Sports",
+        "snippet": "It can take years to create, and then weather and wars can upend all the planning.",
+        "source": "International New York Times",
+        "subsection_name": "",
+        "type_of_material": "News",
+        "uri": "nyt://article/e14886a8-b46b-5893-932d-8e8bd535218f",
+        "web_url": "https://www.nytimes.com/2026/10/13/sports/f1-schedule.html",
+        "word_count": 1001
+      }
+    ],
+    "metadata": {
+      "hits": 1,
+      "offset": 0,
+      "time": 172
+    }
+  }
+}

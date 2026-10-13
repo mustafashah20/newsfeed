@@ -1,0 +1,58 @@
+{
+  "status": "ok",
+  "totalResults": 35,
+  "articles": [
+    {
+      "source": {
+        "id": "the-washington-post",
+        "name": "The Washington Post"
+      },
+      "author": "Rachel Roubein, Daniel Wu",
+      "title": "Sixth person who had measles has died in Pennsylvania, local coroner says - The Washington Post",
+      "description": "The state is experiencing the nation’s worst ongoing measles outbreak, the first in the U.S. to top more than 1,000 cases since 1991.",
+      "url": "https://www.washingtonpost.com/health/2026/10/12/sixth-person-who-had-measles-died-pennsylvania-local-coroner-says/",
+      "urlToImage": "https://www.washingtonpost.com/wp-apps/imrs.php?src=https://cloudfront-us-east-1.images.arcpublishing.com/wapo/5DIQTB3MGFCNHROYFAOINCVOJE.JPG&w=1440",
+      "publishedAt": "2026-10-12T18:31:18Z",
+      "content": "A 39-year-old woman from Franklin County, Pennsylvania, who had been diagnosed with measles has died, according to the local coroners office, marking the sixth such death reported since the states ou… [+22 chars]"
+    },
+    {
+      "source": {
+        "id": "associated-press",
+        "name": "Associated Press"
+      },
+      "author": "Samya Kullab",
+      "title": "Zelenskyy says Russia strikes energy facilities despite Trump claim of an energy ceasefire - AP News",
+      "description": "Ukrainian President Volodymyr Zelenskyy says Russia is still striking Ukraine's energy facilities despite U.S. President Donald Trump's claim of an energy ceasefire. Speaking at the Warsaw Security Forum in Poland on Monday, Zelenskyy said he is willing to ho…",
+      "url": "https://apnews.com/article/russia-ukraine-energy-strikes-trump-ceasefire-6fdef6ff4d033b379c74e1d62183d078",
+      "urlToImage": "https://dims.apnews.com/dims4/default/af4eb12/2147483647/strip/true/crop/6000x3998+0+1/resize/980x653!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2F79%2F42%2Ffa1ec016a3b0544cf756ffa6c5ec%2F604ed66fe2744050be0adfdd4ca2c68e",
+      "publishedAt": "2026-10-12T18:29:00Z",
+      "content": "KYIV, Ukraine (AP) Ukrainian President Volodymyr Zelenskyy said Monday that while Ukraine is willing to halt attacks on Russias energy infrastructure, Moscow has continued to strike his countrys ener… [+6456 chars]"
+    },
+    {
+      "source": {
+        "id": "fox-news",
+        "name": "Fox News"
+      },
+      "author": null,
+      "title": "Selma Blair arrested after in-flight incident - Fox News",
+      "description": "Selma Blair, 54, was arrested Sunday in New York after allegedly attacking crew members mid-air on a Delta flight from Los Angeles.",
+      "url": "https://www.foxnews.com/entertainment/selma-blair-arrested-in-flight-incident",
+      "urlToImage": "https://static.foxnews.com/foxnews.com/content/uploads/2025/10/selma-blair.jpg",
+      "publishedAt": "2026-10-12T18:13:52Z",
+      "content": "Selma Blair was arrested Sunday after allegedly attacking crew members on board a Delta flight into New York City.\r\n\"On Sunday October 11 at approximately 11pm at JFK Airport, PAPD responded to a cal… [+1496 chars]"
+    },
+    {
+      "source": {
+        "id": "the-wall-street-journal",
+        "name": "The Wall Street Journal"
+      },
+      "author": "WSJ",
+      "title": "Exclusive | Dating App Bumble in Advanced Talks to Go Private at $1 Billion Valuation - WSJ",
+      "description": null,
+      "url": "https://www.wsj.com/business/deals/dating-app-bumble-in-advanced-talks-to-go-private-at-1-billion-valuation-fcc8c6ef",
+      "urlToImage": null,
+      "publishedAt": "2026-10-12T18:10:00Z",
+      "content": null
+    }
+  ]
+}

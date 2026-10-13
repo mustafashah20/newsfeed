@@ -1,0 +1,115 @@
+{
+  "status": "OK",
+  "copyright": "Copyright (c) 2026 The New York Times Company. All Rights Reserved.",
+  "response": {
+    "docs": [
+      {
+        "abstract": "Apple unveiled the device as it continues its foray into artificial intelligence and tries to prove it can still innovate.",
+        "byline": {
+          "original": "By Kalley Huang and Emmy Martin"
+        },
+        "document_type": "article",
+        "headline": {
+          "main": "Apple Introduces HomeView, a $299 Tablet for the Home",
+          "kicker": "",
+          "print_headline": ""
+        },
+        "_id": "nyt://article/5bbdc0cc-3f8d-538d-82e7-08c655a2cf07",
+        "keywords": [
+          {
+            "name": "Subject",
+            "value": "Computers and the Internet",
+            "rank": 1
+          },
+          {
+            "name": "Subject",
+            "value": "Artificial Intelligence",
+            "rank": 2
+          }
+        ],
+        "multimedia": {
+          "caption": "Apple unveils its new “Apple HomeView” and a suite of “HomeCollection” smart home devices during an event in New York City on Tuesday.",
+          "credit": "Karsten Moran for The New York Times",
+          "default": {
+            "url": "https://static01.nyt.com/images/2026/10/13/multimedia/13BIZ-APPLE-SUB-01-gbmj/13BIZ-APPLE-SUB-01-gbmj-articleLarge.jpg",
+            "height": 400,
+            "width": 600
+          },
+          "thumbnail": {
+            "url": "https://static01.nyt.com/images/2026/10/13/multimedia/13BIZ-APPLE-SUB-01-gbmj/13BIZ-APPLE-SUB-01-gbmj-thumbStandard.jpg",
+            "height": 75,
+            "width": 75
+          }
+        },
+        "news_desk": "Business",
+        "print_page": "",
+        "print_section": "",
+        "pub_date": "2026-10-13T13:41:50Z",
+        "section_name": "Technology",
+        "snippet": "Apple unveiled the device as it continues its foray into artificial intelligence and tries to prove it can still innovate.",
+        "source": "The New York Times",
+        "subsection_name": "",
+        "type_of_material": "News",
+        "uri": "nyt://article/5bbdc0cc-3f8d-538d-82e7-08c655a2cf07",
+        "web_url": "https://www.nytimes.com/2026/10/13/technology/apple-homeview-tablet.html",
+        "word_count": 773
+      },
+      {
+        "abstract": "Flight was probably more widespread in dinosaurs than previously thought. A newly identified species sheds light on how some achieved liftoff.",
+        "byline": {
+          "original": "By Jack Tamisiea"
+        },
+        "document_type": "article",
+        "headline": {
+          "main": "What Can Four-Winged Dinosaurs Teach Us About Birds?",
+          "kicker": "Trilobites",
+          "print_headline": ""
+        },
+        "_id": "nyt://article/803609b5-9228-5573-8190-579c5731e858",
+        "keywords": [
+          {
+            "name": "Subject",
+            "value": "your-feed-science",
+            "rank": 1
+          },
+          {
+            "name": "Subject",
+            "value": "Paleontology",
+            "rank": 2
+          }
+        ],
+        "multimedia": {
+          "caption": "The fossil, discovered by a local farmer, revealed several aerial adaptations like fused bones in the wrist, elongated bones in the forearm that would have made for a more powerful wing and an enlarged breastbone to anchor flight muscles.",
+          "credit": "Andrea Cau et al. and the Museum of Hebei GEO University, Shijiazhuang, China",
+          "default": {
+            "url": "https://static01.nyt.com/images/2026/10/13/multimedia/13SCI-FOUR-WINGED-DINO-stillpromo/13SCI-FOUR-WINGED-DINO-stillpromo-articleLarge.jpg",
+            "height": 400,
+            "width": 600
+          },
+          "thumbnail": {
+            "url": "https://static01.nyt.com/images/2026/10/13/multimedia/13SCI-FOUR-WINGED-DINO-stillpromo/13SCI-FOUR-WINGED-DINO-stillpromo-thumbStandard.jpg",
+            "height": 75,
+            "width": 75
+          }
+        },
+        "news_desk": "Science",
+        "print_page": "",
+        "print_section": "",
+        "pub_date": "2026-10-13T09:01:47Z",
+        "section_name": "Science",
+        "snippet": "Flight was probably more widespread in dinosaurs than previously thought. A newly identified species sheds light on how some achieved liftoff.",
+        "source": "The New York Times",
+        "subsection_name": "",
+        "type_of_material": "News",
+        "uri": "nyt://article/803609b5-9228-5573-8190-579c5731e858",
+        "web_url": "https://www.nytimes.com/2026/10/13/science/four-winged-dinosaur-early-birds-flight.html",
+        "word_count": 717
+      }
+    ],
+    "metadata": {
+      "hits": 10000,
+      "offset": 0,
+      "time": 178
+    }
+  }
+}

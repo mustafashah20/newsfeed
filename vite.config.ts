@@ -146,6 +146,8 @@ export default defineConfig(({ mode }) => {
       environment: 'jsdom',
       setupFiles: ['./src/test/setup.ts'],
       include: ['src/**/*.test.{ts,tsx}'],
+      // Date logic uses local days; fixtures carry UTC timestamps. Same result on every machine.
+      env: { TZ: 'UTC' },
     },
   };
 });

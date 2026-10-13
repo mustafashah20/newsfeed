@@ -13,7 +13,7 @@ export type Article = {
   externalId: string;       // provider-native id used in the reader URL (Guardian content id, NYT _id, NewsAPI url)
   title: string;
   description: string | null;
-  excerpt: string | null;   // longest text the list API gives (NYT lead_paragraph, NewsAPI content minus "[+N chars]")
+  excerpt: string | null;   // extra text beyond description (NewsAPI content minus "[+N chars]"); NYT: null (no lead_paragraph in current responses)
   url: string;
   imageUrl: string | null;
   publishedAt: string;      // ISO 8601
@@ -76,7 +76,7 @@ One axios service; adapters never call `fetch` or `axios` directly. `createApiCl
 - **Response interceptor (success):** rejects a 2xx whose body isn't JSON as `ApiError { code: 'invalid_response' }`.
 - **Response interceptor (error):** maps every `AxiosError` to `ApiError { status, code, provider, message }`: `not_configured` (503 + body code from the proxy), `unauthorized` (401/403), `rate_limited` (429), `timeout`, `network`, `server` (5xx), `http`. Cancellations (`ERR_CANCELED`, from Query's `signal`) are rethrown unchanged. `message` is for developers and never contains the request URL; the UI maps `code` to friendly text.
 
-Calls look like `client.get<unknown>('/search', { params, signal })`; `data` is `unknown` and goes straight to the Zod schema. `isRetryableError` (network, timeout, server) drives Query's retry. Tests use MSW, which intercepts axios's fetch adapter.
+Calls look like `client.get<unknown>('/search', { params, signal })`; `data` is `unknown` and goes to `parseResponse(schema, data, provider)`, which turns a shape mismatch into `ApiError { code: 'invalid_response' }` (so the UI can show a friendly per-source error). Items are then validated one by one in the mapper and invalid ones dropped. `isRetryableError` (network, timeout, server) drives Query's retry. Tests use MSW, which intercepts axios's fetch adapter.
 
 ## TanStack Query
 
@@ -151,7 +151,7 @@ Every article is read inside the app. Only the Guardian's API returns full text;
 | Source | Reader content | Works on refresh / shared link? |
 |---|---|---|
 | Guardian | Full body (`isFullText: true`), fetched by id | Yes: `fetchArticle` calls the single-item endpoint |
-| NYT | Image, title, byline, abstract + lead paragraph (`isFullText: false`) + `PreviewNotice` | Yes: `fetchArticle` queries Article Search by `_id` (1 request against the 5/min limit; skipped when a preview is cached) |
+| NYT | Image, title, byline, abstract (`isFullText: false`) + `PreviewNotice` | Yes: `fetchArticle` queries Article Search by `_id` (1 request against the 5/min limit; skipped when a preview is cached) |
 | NewsAPI | Image, title, byline, description + truncated content (`isFullText: false`) + `PreviewNotice` | Only if the preview is in the Query cache (NewsAPI has no lookup by id) |
 
 **Data flow**
@@ -163,9 +163,13 @@ Every article is read inside the app. Only the Guardian's API returns full text;
 
 **Guardian body parsing (`services/news/providers/guardian/body-parser.ts`)**
 - Request `show-fields=body,byline,thumbnail,trailText` (and `show-elements=image` for a larger hero image when available).
-- Parse with `new DOMParser().parseFromString(html, 'text/html')`. Walk top-level elements and keep only `p` → paragraph, `h2`/`h3` → heading, `blockquote` → quote, `li` → listItem, using `textContent` (trimmed, empty blocks dropped).
-- Drop everything else: `script`, `iframe`, `figure`, `aside`, embeds, rich links. No HTML ever reaches React; the UI maps blocks to `<p>`, `<h2>`, `<blockquote>`, `<li>`.
-- Pure function, unit-tested with a real trimmed body fixture.
+- Parse with `new DOMParser().parseFromString(html, 'text/html')` and walk the tree **recursively** (real bodies nest content: `li` sits inside `ul`/`ol`, and liveblogs wrap every post in `div.block > div.block-elements`):
+  - **Emit** a block for `p` → paragraph, `h2`/`h3` → heading, `blockquote` → quote (one block; its inner `<p>`s joined with a blank line), `li` → listItem. Text is `textContent`, whitespace-collapsed and trimmed; empty blocks are dropped. Don't descend into an emitted element (`li > p` stays one listItem).
+  - **Descend** into containers: `div`, `section`, `ul`, `ol`.
+  - **Drop** the whole subtree of everything else: `figure` (images, embeds), `aside` (rich links "Related: …"), `iframe`, `script`, `style`, `gu-atom` and other custom elements, and liveblog timestamps (`p.block-time`).
+- No HTML ever reaches React; the UI maps blocks to `<p>`, `<h2>`, `<blockquote>`, `<li>`.
+- Pure function, unit-tested with the real trimmed bodies in `src/test/fixtures/guardian/bodies.json` (`article`, `list`, `liveblog`) and `guardian/item.json`.
+- Guardian search also returns `type: "liveblog"` items; they go through the same parser.
 
 **Rules**
 - Article bodies stay in the in-memory Query cache only. Never persist them (no localStorage, no Zustand).

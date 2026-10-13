@@ -1,0 +1,166 @@
+{
+  "status": "OK",
+  "copyright": "Copyright (c) 2026 The New York Times Company. All Rights Reserved.",
+  "response": {
+    "docs": [
+      {
+        "abstract": "It can take years to create, and then weather and wars can upend all the planning.",
+        "byline": {
+          "original": "By Phillip Horton"
+        },
+        "document_type": "article",
+        "headline": {
+          "main": "The Complicated Puzzle of the Formula 1 Schedule",
+          "kicker": "",
+          "print_headline": "Solving a Formula 1 puzzle"
+        },
+        "_id": "nyt://article/e14886a8-b46b-5893-932d-8e8bd535218f",
+        "keywords": [
+          {
+            "name": "Subject",
+            "value": "Automobile Racing",
+            "rank": 1
+          },
+          {
+            "name": "Organization",
+            "value": "Formula One",
+            "rank": 2
+          }
+        ],
+        "multimedia": {
+          "caption": "Clockwise from top left: Oscar Piastri of Australia driving during F1 testing in December in Abu Dhabi; the Monaco Grand Prix in Monte Carlo in June; the Singapore Grand Prix last October; and Charles Leclerc for Ferrari in the lead during the Grand Prix of Azerbaijan in September.",
+          "credit": "Getty",
+          "default": {
+            "url": "https://static01.nyt.com/images/2026/10/10/multimedia/10sp-singapore-schedule-grid/10sp-singapore-schedule-grid-articleLarge.jpg",
+            "height": 400,
+            "width": 600
+          },
+          "thumbnail": {
+            "url": "https://static01.nyt.com/images/2026/10/10/multimedia/10sp-singapore-schedule-grid/10sp-singapore-schedule-grid-thumbStandard.jpg",
+            "height": 75,
+            "width": 75
+          }
+        },
+        "news_desk": "SpecialSections",
+        "print_page": "13",
+        "print_section": "A",
+        "pub_date": "2026-10-13T14:15:19Z",
+        "section_name": "Sports",
+        "snippet": "It can take years to create, and then weather and wars can upend all the planning.",
+        "source": "International New York Times",
+        "subsection_name": "",
+        "type_of_material": "News",
+        "uri": "nyt://article/e14886a8-b46b-5893-932d-8e8bd535218f",
+        "web_url": "https://www.nytimes.com/2026/10/13/sports/f1-schedule.html",
+        "word_count": 1001
+      },
+      {
+        "abstract": "Scientists believe there are planets outside our solar system where life is even more abundant and sustainable.",
+        "byline": {
+          "original": "By Natalie Wolchover"
+        },
+        "document_type": "article",
+        "headline": {
+          "main": "Worlds More Habitable Than Earth? They’re Out There.",
+          "kicker": "",
+          "print_headline": ""
+        },
+        "_id": "nyt://article/01595c4b-6184-5c29-8032-8b1cab47e8a5",
+        "keywords": [
+          {
+            "name": "Subject",
+            "value": "Space and Astronomy",
+            "rank": 1
+          },
+          {
+            "name": "Subject",
+            "value": "Stars and Galaxies",
+            "rank": 2
+          }
+        ],
+        "multimedia": {
+          "caption": "",
+          "credit": "",
+          "default": {
+            "url": "https://static01.nyt.com/images/2026/10/13/arts/13SCI-NatalieWolchover-SuperEarths-FirstFrame/13SCI-NatalieWolchover-SuperEarths-FirstFrame-articleLarge.png",
+            "height": 600,
+            "width": 600
+          },
+          "thumbnail": {
+            "url": "https://static01.nyt.com/images/2026/10/13/arts/13SCI-NatalieWolchover-SuperEarths-FirstFrame/13SCI-NatalieWolchover-SuperEarths-FirstFrame-thumbStandard.png",
+            "height": 75,
+            "width": 75
+          }
+        },
+        "news_desk": "Science",
+        "print_page": "",
+        "print_section": "",
+        "pub_date": "2026-10-13T09:00:44Z",
+        "section_name": "Science",
+        "snippet": "Scientists believe there are planets outside our solar system where life is even more abundant and sustainable.",
+        "source": "The New York Times",
+        "subsection_name": "",
+        "type_of_material": "News",
+        "uri": "nyt://article/01595c4b-6184-5c29-8032-8b1cab47e8a5",
+        "web_url": "https://www.nytimes.com/2026/10/13/science/inhabitable-planets-solar-system.html",
+        "word_count": 1333
+      },
+      {
+        "abstract": "Extreme weather is driving up insurance rates, impacting races from California to the nation’s central Tornado Alley.",
+        "byline": {
+          "original": "By David W. Chen"
+        },
+        "document_type": "article",
+        "headline": {
+          "main": "The New Affordability Fight in the Midterms: Home Insurance Prices",
+          "kicker": "",
+          "print_headline": ""
+        },
+        "_id": "nyt://article/fa6d95d6-46c1-5575-aab2-c666afabf217",
+        "keywords": [
+          {
+            "name": "Subject",
+            "value": "Homeowners Insurance",
+            "rank": 1
+          },
+          {
+            "name": "Subject",
+            "value": "Midterm Elections (2026)",
+            "rank": 2
+          }
+        ],
+        "multimedia": {
+          "caption": "Increasingly violent storms in the nation’s midsection, like the storm that hit Gilbert Kirk’s house in Kansas City, Kan., are driving up homeowners insurance.",
+          "credit": "Chase Castor for The New York Times",
+          "default": {
+            "url": "https://static01.nyt.com/images/2026/10/13/multimedia/13nat-home-insurance-01-vtpg/13nat-home-insurance-01-vtpg-articleLarge.jpg",
+            "height": 400,
+            "width": 600
+          },
+          "thumbnail": {
+            "url": "https://static01.nyt.com/images/2026/10/13/multimedia/13nat-home-insurance-01-vtpg/13nat-home-insurance-01-vtpg-thumbStandard.jpg",
+            "height": 75,
+            "width": 75
+          }
+        },
+        "news_desk": "National",
+        "print_page": "",
+        "print_section": "",
+        "pub_date": "2026-10-13T09:00:08Z",
+        "section_name": "U.S.",
+        "snippet": "Extreme weather is driving up insurance rates, impacting races from California to the nation’s central Tornado Alley.",
+        "source": "The New York Times",
+        "subsection_name": "Politics",
+        "type_of_material": "News",
+        "uri": "nyt://article/fa6d95d6-46c1-5575-aab2-c666afabf217",
+        "web_url": "https://www.nytimes.com/2026/10/13/us/politics/home-insurance-extreme-weather-elections.html",
+        "word_count": 1037
+      }
+    ],
+    "metadata": {
+      "hits": 10000,
+      "offset": 0,
+      "time": 167
+    }
+  }
+}

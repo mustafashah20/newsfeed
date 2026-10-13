@@ -52,6 +52,19 @@ export function isRetryableError(error: unknown) {
   return error instanceof ApiError && RETRYABLE_CODES.has(error.code);
 }
 
+/** Validates a response body; a shape the schema doesn't expect becomes `invalid_response`. */
+export function parseResponse<T>(schema: z.ZodType<T>, data: unknown, provider: ProviderId): T {
+  const result = schema.safeParse(data);
+  if (result.success) return result.data;
+  throw new ApiError({
+    status: 200,
+    code: 'invalid_response',
+    provider,
+    message: 'Response did not match the expected shape',
+    cause: result.error,
+  });
+}
+
 /** An axios client for one provider's same-origin proxy path (`/api/<provider>`). */
 export function createApiClient(provider: ProviderId): AxiosInstance {
   const client = axios.create({

@@ -1,0 +1,67 @@
+{
+  "response": {
+    "status": "ok",
+    "userTier": "developer",
+    "total": 132987,
+    "startIndex": 1,
+    "pageSize": 5,
+    "currentPage": 1,
+    "pages": 26598,
+    "orderBy": "newest",
+    "results": [
+      {
+        "id": "film/2026/oct/13/frank-and-percy-review-bromance-becomes-romance-for-two-dog-walkers-ian-mckellen-roger-allam",
+        "type": "article",
+        "sectionId": "film",
+        "sectionName": "Film",
+        "webPublicationDate": "2026-10-13T20:05:34Z",
+        "webTitle": "Frank and Percy review – bromance becomes romance for Ian McKellen and Roger Allam’s dog walkers",
+        "webUrl": "https://www.theguardian.com/film/2026/oct/13/frank-and-percy-review-bromance-becomes-romance-for-two-dog-walkers-ian-mckellen-roger-allam",
+        "apiUrl": "https://content.guardianapis.com/film/2026/oct/13/frank-and-percy-review-bromance-becomes-romance-for-two-dog-walkers-ian-mckellen-roger-allam",
+        "fields": {
+          "trailText": "Ian McKellen and Roger Allam reprise their roles for the film version of Ben Weatherill’s play in a star-filled bittersweet comedy about finding love later in life",
+          "byline": "Peter Bradshaw",
+          "thumbnail": "https://media.guim.co.uk/7cb944b82f301a05f383144d4fc168866ab33382/474_0_5525_4421/500.jpg"
+        },
+        "isHosted": false,
+        "pillarId": "pillar/arts",
+        "pillarName": "Arts"
+      },
+      {
+        "id": "australia-news/live/2026/oct/14/treasurer-jim-chalmers-labor-one-nation-pauline-hanson-one-nation-gas-reservation-scheme-ntwnfb",
+        "type": "liveblog",
+        "sectionId": "australia-news",
+        "sectionName": "Australia news",
+        "webPublicationDate": "2026-10-13T20:05:25Z",
+        "webTitle": "Australian politics live: Chalmers urges against mocking, cancelling or talking down to One Nation supporters",
+        "webUrl": "https://www.theguardian.com/australia-news/live/2026/oct/14/treasurer-jim-chalmers-labor-one-nation-pauline-hanson-one-nation-gas-reservation-scheme-ntwnfb",
+        "apiUrl": "https://content.guardianapis.com/australia-news/live/2026/oct/14/treasurer-jim-chalmers-labor-one-nation-pauline-hanson-one-nation-gas-reservation-scheme-ntwnfb",
+        "fields": {
+          "trailText": "Follow the day’s news live.",
+          "byline": "Martin Farrer",
+          "thumbnail": "https://media.guim.co.uk/d2a9c75ba8dbf2060687cfd2fc41a50f400832a2/24_0_5132_4106/500.jpg"
+        },
+        "isHosted": false,
+        "pillarId": "pillar/news",
+        "pillarName": "News"
+      },
+      {
+        "id": "news/2026/oct/13/corrections-and-clarifications",
+        "type": "article",
+        "sectionId": "news",
+        "sectionName": "News",
+        "webPublicationDate": "2026-10-13T20:00:33Z",
+        "webTitle": "Corrections and clarifications",
+        "webUrl": "https://www.theguardian.com/news/2026/oct/13/corrections-and-clarifications",
+        "apiUrl": "https://content.guardianapis.com/news/2026/oct/13/corrections-and-clarifications",
+        "fields": {
+          "trailText": "Van Gogh painting",
+          "byline": "Corrections and clarifications column editor"
+        },
+        "isHosted": false,
+        "pillarId": "pillar/news",
+        "pillarName": "News"
+      }
+    ]
+  }
+}
