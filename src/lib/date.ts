@@ -30,6 +30,11 @@ export function toIsoDateTime(value: string | null | undefined): string | null {
   return isValid(date) ? date.toISOString() : null;
 }
 
+/** A Date as `yyyy-MM-dd` in local time (the app's day format). */
+export function toDayString(date: Date) {
+  return format(date, 'yyyy-MM-dd');
+}
+
 /** `yyyy-MM-dd` → `yyyyMMdd` (NYT's begin_date/end_date). */
 export function toCompactDate(day: string) {
   return day.replaceAll('-', '');

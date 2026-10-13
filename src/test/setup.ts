@@ -20,8 +20,23 @@ afterEach(() => {
   cleanup();
 });
 
-// jsdom doesn't implement these; the router's scroll restoration and Sonner call them.
+// jsdom doesn't implement these; the router's scroll restoration, Sonner and Radix
+// (Select, Popover) call them.
 window.scrollTo = () => undefined;
+Element.prototype.scrollIntoView = () => undefined;
+Element.prototype.hasPointerCapture = () => false;
+Element.prototype.releasePointerCapture = () => undefined;
+globalThis.ResizeObserver = class {
+  observe() {
+    return undefined;
+  }
+  unobserve() {
+    return undefined;
+  }
+  disconnect() {
+    return undefined;
+  }
+};
 window.matchMedia = (query: string) => ({
   matches: false,
   media: query,

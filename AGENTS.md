@@ -119,7 +119,7 @@ Anything else: ask before creating a new top-level folder.
 ## UI and responsive design
 
 - Use shadcn primitives (Button, Input, Card, Badge, Select, Checkbox, Switch, Popover, Calendar, Sheet, Skeleton, Separator, Sonner); don't rebuild them. Colors only through shadcn CSS variables. `cn()` for classes; no inline `style`.
-- **Layout:** sticky header (logo, search → `/search?q=`, nav Feed/Search/Preferences; Sheet below `md`). Filters in a sidebar at `lg`+, a Sheet below, with removable active-filter chips. Card grid 1 → `sm:` 2 → `lg:` 3. Card: lazy `aspect-video` image with fallback, source badge, category, relative time, title (2-line clamp), description (3-line clamp), author.
+- **Layout:** sticky header (logo, search → `/search?q=`, nav Feed/Search/Preferences; Sheet below `md`). Filters in a sidebar at `lg`+, a Sheet below, with removable active-filter chips. Card grid 1 → 2 → 3 columns by the list's own width (container queries `@xl`/`@3xl`, so it fits both the full-width feed and the space beside the search sidebar). Card: lazy `aspect-video` image with fallback, source badge, category, relative time, title (2-line clamp), description (3-line clamp), author.
 - **Every async view** has a skeleton, an empty state (+ clear filters), an error state (+ retry) and partial-error chips.
 - **Search with no keyword** (`/search` with empty `q`) shows the latest articles from the selected sources with the other filters applied, plus a prompt to type a keyword. It is never a blank page.
 - **Cards open the in-app reader** (`/article/$provider?id=…`) via the router's `<Link>`, never the publisher's site. No card, list or button in the app links out. The router has scroll restoration on, so Back returns to the same place in the list.

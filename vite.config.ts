@@ -136,7 +136,7 @@ export default defineConfig(({ mode }) => {
               { name: 'data', test: /node_modules[\\/](axios|date-fns)[\\/]/ },
               {
                 name: 'ui',
-                test: /node_modules[\\/](radix-ui|@radix-ui|sonner|cn|lucide-react|react-remove-scroll[^\\/]*)[\\/]/,
+                test: /node_modules[\\/](radix-ui|@radix-ui|sonner|cn|lucide-react|react-day-picker|react-remove-scroll[^\\/]*)[\\/]/,
               },
             ],
           },

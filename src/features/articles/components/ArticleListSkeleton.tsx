@@ -8,9 +8,9 @@ type ArticleListSkeletonProps = {
 // Mirrors ArticleList/ArticleCard so the layout doesn't jump when articles arrive.
 export function ArticleListSkeleton({ count = 6 }: ArticleListSkeletonProps) {
   return (
-    <div role="status" aria-busy="true">
+    <div role="status" aria-busy="true" className="@container">
       <span className="sr-only">Loading articles…</span>
-      <ul aria-hidden="true" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul aria-hidden="true" className="grid grid-cols-1 gap-4 @xl:grid-cols-2 @3xl:grid-cols-3">
         {Array.from({ length: count }, (_, i) => (
           <li key={i}>
             <Card className="gap-3 pt-0">
