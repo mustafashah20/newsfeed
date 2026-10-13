@@ -1,6 +1,19 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
-import { afterEach } from 'vitest';
+import { afterAll, afterEach, beforeAll } from 'vitest';
+
+import { server } from './msw/server';
+
+// Tests never reach the real APIs: any request without a handler fails the test.
+beforeAll(() => {
+  server.listen({ onUnhandledRequest: 'error' });
+});
+afterEach(() => {
+  server.resetHandlers();
+});
+afterAll(() => {
+  server.close();
+});
 
 // Vitest globals are off, so RTL can't register its own auto-cleanup.
 afterEach(() => {

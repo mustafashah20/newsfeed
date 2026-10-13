@@ -28,9 +28,9 @@ npm only; commit `package-lock.json`.
 
 ## Stack (fixed)
 
-Node 24 · Vite 8 · React 19 · TypeScript strict (+ `noUncheckedIndexedAccess`, `noImplicitOverride`, `verbatimModuleSyntax`) · Tailwind v4 via `@tailwindcss/vite` (CSS-first, no `tailwind.config.js`) · shadcn/ui + lucide-react · TanStack Router (file-based) · TanStack Query v5 · Zustand v5 (preferences only) · Zod v4 · date-fns · Vitest + RTL + user-event + MSW v2 + jsdom · ESLint flat config (typescript-eslint, react-hooks, jsx-a11y) + Prettier (tailwind plugin) · Docker: `node:24-alpine` → `nginxinc/nginx-unprivileged`.
+Node 24 · Vite 8 · React 19 · TypeScript strict (+ `noUncheckedIndexedAccess`, `noImplicitOverride`, `verbatimModuleSyntax`) · Tailwind v4 via `@tailwindcss/vite` (CSS-first, no `tailwind.config.js`) · shadcn/ui + lucide-react · TanStack Router (file-based) · TanStack Query v5 · Zustand v5 (preferences only) · axios 1.x (one client in `services/news/http.ts`) · Zod v4 · date-fns · Vitest + RTL + user-event + MSW v2 + jsdom · ESLint flat config (typescript-eslint, react-hooks, jsx-a11y) + Prettier (tailwind plugin) · Docker: `node:24-alpine` → `nginxinc/nginx-unprivileged`.
 
-Packages that `shadcn add` installs (radix-ui, class-variance-authority, clsx, tailwind-merge, tw-animate-css, sonner…) are allowed. No other dependencies (axios, lodash, redux, form libraries, moment, UI kits…) without asking. No major-version upgrades.
+Packages that `shadcn add` installs (radix-ui, class-variance-authority, clsx, tailwind-merge, tw-animate-css, sonner…) are allowed. No other dependencies (lodash, redux, ky/other HTTP clients, form libraries, moment, UI kits…) without asking. No major-version upgrades.
 
 ## Hard rules
 
@@ -45,6 +45,7 @@ Packages that `shadcn add` installs (radix-ui, class-variance-authority, clsx, t
 
 **API quota (very small)**
 - Search runs on submit only, never as-you-type (any live suggestions: debounce ≥ 500 ms, ≥ 3 chars). No refetch on focus, no polling, no retries on 4xx. Tests never call real APIs (MSW + fixtures).
+- All HTTP goes through the axios client in `services/news/http.ts` (`createApiClient(provider)`); never `fetch` or a bare `axios.get` elsewhere, and never import axios outside `services/`. Its interceptors own the base URL, timeout, param cleanup and `ApiError` mapping.
 - Show users friendly errors, never raw API messages: map `ApiError` (401 bad key, 429 rate limit, network/timeout) to a short message with a Retry action. A missing key must not break the app: that source shows "{Source} isn't configured" and the others keep working.
 
 **Generated files (don't hand-edit)**
@@ -107,7 +108,7 @@ Anything else: ask before creating a new top-level folder.
 ## React
 
 - **Components:** function components, named exports (route files excepted), one per file, `XProps` type declared above and typed directly (no `React.FC`). React 19: `ref` is a normal prop; no `forwardRef`, `defaultProps`, classes or string refs. Files ≤ ~200 lines.
-- **Three layers:** routes/pages compose; hooks hold logic and never return JSX; presentational components render props and local UI state only (no Query, store, router or `fetch`). A presentational component renders in a test with props alone.
+- **Three layers:** routes/pages compose; hooks hold logic and never return JSX; presentational components render props and local UI state only (no Query, store, router, axios or `fetch`). A presentational component renders in a test with props alone.
 - **Hooks:** one concern each, named after what they return, return named objects. Pure logic (merge, normalize, format) goes in `lib/` and is unit-tested.
 - **State homes:** server data → Query · filters and shareable state → URL search params · preferences → Zustand (selectors only) · temporary UI state → `useState`. No app-state context. Keep state as low as possible.
 - **Effects:** no data fetching in `useEffect`. Effects only sync with things outside React (DOM APIs, observers, listeners). Never copy or derive state in an effect; compute it during render. No reflexive `useMemo`/`useCallback`/`memo`.

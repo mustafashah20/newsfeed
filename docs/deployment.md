@@ -6,7 +6,9 @@ Keys live in `.env` as `NEWSAPI_KEY`, `GUARDIAN_API_KEY`, `NYT_API_KEY` (no `VIT
 
 ## Development: `vite.config.ts`
 
-Load keys with `loadEnv(mode, process.cwd(), '')` (empty prefix, so non-`VITE_` vars are readable in the config only). Define the proxy once and use it for both `server.proxy` and `preview.proxy`:
+Load keys with `loadEnv(mode, process.cwd(), '')` (empty prefix, so non-`VITE_` vars are readable in the config only). Define the proxy once and use it for both `server.proxy` and `preview.proxy`.
+
+`rewrite` only maps the path. Keys are added to the **outgoing** request in a `proxyReq` listener, never in `rewrite`: Vite logs the rewritten `req.url` on proxy errors, so a key added there would be printed to the terminal.
 
 ```ts
 const withKey = (path: string, key: string) =>
@@ -16,21 +18,40 @@ const apiProxy = {
   '/api/newsapi': {
     target: 'https://newsapi.org',
     changeOrigin: true,
-    rewrite: (p: string) => p.replace(/^\/api\/newsapi/, '/v2'),
-    headers: { 'X-Api-Key': env.NEWSAPI_KEY ?? '' },
+    rewrite: (p) => p.replace(/^\/api\/newsapi/, '/v2'),
+    configure: (proxy) => {
+      proxy.on('proxyReq', (proxyReq) => {
+        proxyReq.setHeader('X-Api-Key', keys.newsapi);
+        proxyReq.removeHeader('origin'); // free plan rejects browser-originated requests
+        proxyReq.removeHeader('referer');
+      });
+    },
   },
   '/api/guardian': {
     target: 'https://content.guardianapis.com',
     changeOrigin: true,
-    rewrite: (p: string) => withKey(p.replace(/^\/api\/guardian/, ''), env.GUARDIAN_API_KEY ?? ''),
+    rewrite: (p) => p.replace(/^\/api\/guardian/, ''),
+    configure: (proxy) => {
+      proxy.on('proxyReq', (proxyReq) => { proxyReq.path = withKey(proxyReq.path, keys.guardian); });
+    },
   },
-  '/api/nyt': {
-    target: 'https://api.nytimes.com',
-    changeOrigin: true,
-    rewrite: (p: string) => withKey(p.replace(/^\/api\/nyt/, '/svc/search/v2'), env.NYT_API_KEY ?? ''),
-  },
+  '/api/nyt': { /* same as guardian, rewrite to /svc/search/v2, keys.nyt */ },
 };
 ```
+
+## Missing keys: the `not_configured` contract
+
+A blank key would earn an upstream 401 that looks exactly like a bad key. Instead, both proxies answer locally, without contacting the provider:
+
+```
+HTTP 503   Content-Type: application/json
+{"status":"error","code":"not_configured","message":"API key not configured"}
+```
+
+`http.ts` maps this to `ApiError { code: 'not_configured' }` (never retried) and the UI shows "{Source} isn't configured" while the other sources keep working.
+
+- **Dev/preview:** the `newsfeed:api-key-guard` plugin in `vite.config.ts` adds a middleware in `configureServer`/`configurePreviewServer`, which runs before Vite's proxy.
+- **nginx (milestone 10):** each `/api/<provider>/` location starts with `if ($key = "") { return 503 '{"status":"error","code":"not_configured",...}'; }` with `default_type application/json`. Every key must be **defined** in the container's environment, even if blank (`.env.example` lists all three): envsubst leaves undefined `${VARS}` untouched and nginx then fails to start on the unknown variable.
 
 ## Docker: `nginx/default.conf.template`
 
@@ -56,16 +77,17 @@ server {
   }
 
   location /api/guardian/ {
-    rewrite ^/api/guardian/(.*)$ /$1 break;
+    # `set` must come before `rewrite ... break`: break stops all later rewrite-module directives.
     set $args "$args&api-key=${GUARDIAN_API_KEY}";
+    rewrite ^/api/guardian/(.*)$ /$1 break;
     proxy_pass https://content.guardianapis.com;
     proxy_ssl_server_name on;
     proxy_set_header Host content.guardianapis.com;
   }
 
   location /api/nyt/ {
-    rewrite ^/api/nyt/(.*)$ /svc/search/v2/$1 break;
     set $args "$args&api-key=${NYT_API_KEY}";
+    rewrite ^/api/nyt/(.*)$ /svc/search/v2/$1 break;
     proxy_pass https://api.nytimes.com;
     proxy_ssl_server_name on;
     proxy_set_header Host api.nytimes.com;

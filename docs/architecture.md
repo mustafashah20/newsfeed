@@ -60,7 +60,7 @@ export const supportsArticleDetail = (p: NewsProvider): p is NewsProvider & Arti
 
 Four files, one job each:
 
-- `client.ts`: builds the URL from `ProviderQuery` + page and calls `fetchJson`. Knows the provider's param names, nothing about the UI.
+- `client.ts`: a pure `buildXParams(query, page)` that maps `ProviderQuery` + page to the provider's query params (unit-tested), plus the call through the provider's axios client. Knows the provider's param names, nothing about the UI.
 - `schema.ts`: Zod schema of the **raw** response. Loose objects; optional/nullable wherever the API may omit fields.
 - `mapper.ts`: pure `raw item → Article | null`. `safeParse` each item; drop invalid items instead of failing the page.
 - `index.ts`: composes the three into the exported `NewsProvider` (e.g. `newsapiProvider`). Not a barrel.
@@ -69,7 +69,14 @@ Four files, one job each:
 
 ## HTTP (`services/news/http.ts`)
 
-`fetchJson(url, { signal, timeoutMs = 10_000 })` combines the caller's signal with a timeout (`AbortSignal.any`), throws `ApiError { status, code, provider, message }` on non-2xx, and returns `unknown` for the schema to parse. All clients use it.
+One axios service; adapters never call `fetch` or `axios` directly. `createApiClient(provider)` returns an axios instance for that provider's proxy path, configured once:
+
+- **Instance config:** `baseURL` `/api/<provider>` (resolved against `location.origin` so it also works under jsdom), `timeout: 10_000`, `Accept: application/json`, `adapter: 'fetch'`, `responseType: 'json'`.
+- **Request interceptor:** drops `undefined`, `null` and `''` params, so builders can pass optional filters straight through. The key is never added here: the proxy adds it.
+- **Response interceptor (success):** rejects a 2xx whose body isn't JSON as `ApiError { code: 'invalid_response' }`.
+- **Response interceptor (error):** maps every `AxiosError` to `ApiError { status, code, provider, message }`: `not_configured` (503 + body code from the proxy), `unauthorized` (401/403), `rate_limited` (429), `timeout`, `network`, `server` (5xx), `http`. Cancellations (`ERR_CANCELED`, from Query's `signal`) are rethrown unchanged. `message` is for developers and never contains the request URL; the UI maps `code` to friendly text.
+
+Calls look like `client.get<unknown>('/search', { params, signal })`; `data` is `unknown` and goes straight to the Zod schema. `isRetryableError` (network, timeout, server) drives Query's retry. Tests use MSW, which intercepts axios's fetch adapter.
 
 ## TanStack Query
 

@@ -7,6 +7,17 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
+// Features expose their API through index.ts; deep imports bypass it.
+const FEATURE_INTERNALS = {
+  group: ['@/features/*/*'],
+  message: 'Import from the feature index (@/features/<name>) instead.',
+};
+// All HTTP goes through the axios client in services/news/http.ts.
+const AXIOS = {
+  name: 'axios',
+  message: 'Use the API client from services/news (createApiClient); axios stays in services/.',
+};
+
 export default defineConfig([
   globalIgnores(['dist', 'coverage', 'src/routeTree.gen.ts']),
   {
@@ -28,18 +39,13 @@ export default defineConfig([
     rules: {
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
-      // Features expose their API through index.ts; deep imports bypass it.
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: ['@/features/*/*'],
-              message: 'Import from the feature index (@/features/<name>) instead.',
-            },
-          ],
-        },
-      ],
+      'no-restricted-imports': ['error', { patterns: [FEATURE_INTERNALS], paths: [AXIOS] }],
+    },
+  },
+  {
+    files: ['src/services/**'],
+    rules: {
+      'no-restricted-imports': ['error', { patterns: [FEATURE_INTERNALS] }],
     },
   },
   {
