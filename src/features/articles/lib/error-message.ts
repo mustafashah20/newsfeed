@@ -11,6 +11,7 @@ const MESSAGES: Record<ApiErrorCode, (source: string) => string> = {
   not_configured: (s) => `${s} isn't configured`,
   unauthorized: (s) => `${s} rejected the API key`,
   rate_limited: (s) => `${s} rate limit reached. Try again in a minute`,
+  not_found: (s) => `${s} couldn’t find this`,
   timeout: (s) => `${s} took too long to respond`,
   network: (s) => `Couldn't reach ${s}. Check your connection`,
   server: (s) => `${s} is having problems right now`,

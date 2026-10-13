@@ -6,6 +6,7 @@ export const GUARDIAN_PAGE_SIZE = 12;
 
 // Without show-fields the API returns no description, image or author.
 const SEARCH_FIELDS = 'trailText,thumbnail,byline';
+const ITEM_FIELDS = 'body,byline,thumbnail,trailText';
 
 const client = createApiClient('guardian');
 
@@ -27,6 +28,20 @@ export function buildGuardianSearchParams(query: ProviderQuery, page: number) {
 export async function searchGuardian(query: ProviderQuery, page: number, signal: AbortSignal) {
   const { data } = await client.get<unknown>('/search', {
     params: buildGuardianSearchParams(query, page),
+    signal,
+  });
+  return data;
+}
+
+/** Guardian ids contain slashes ("film/2026/oct/13/slug"): encode each segment, keep the slashes. */
+export function guardianItemPath(id: string) {
+  return `/${id.split('/').map(encodeURIComponent).join('/')}`;
+}
+
+export async function fetchGuardianItem(id: string, signal: AbortSignal) {
+  const { data } = await client.get<unknown>(guardianItemPath(id), {
+    // show-elements=image adds the larger hero image.
+    params: { 'show-fields': ITEM_FIELDS, 'show-elements': 'image' },
     signal,
   });
   return data;

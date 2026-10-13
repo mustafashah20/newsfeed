@@ -108,10 +108,13 @@ describe('feed', () => {
   });
 });
 
-describe('reader route (placeholder)', () => {
+describe('reader route', () => {
+  // Was the milestone 6 placeholder; the real reader now opens the article (default fixture).
   it('opens for a known provider', async () => {
     renderApp('/article/guardian?id=film/2026/oct/13/x');
-    expect(await screen.findByRole('heading', { name: 'Article reader' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { level: 1, name: /Frank and Percy review/ }),
+    ).toBeInTheDocument();
   });
 
   it('shows not found for an unknown provider', async () => {

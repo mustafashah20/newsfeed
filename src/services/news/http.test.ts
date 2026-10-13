@@ -53,6 +53,7 @@ describe('createApiClient', () => {
     { status: 403, code: 'unauthorized', retryable: false },
     { status: 429, code: 'rate_limited', retryable: false },
     { status: 400, code: 'http', retryable: false },
+    { status: 404, code: 'not_found', retryable: false },
     { status: 500, code: 'server', retryable: true },
   ])('maps HTTP $status to $code', async ({ status, code, retryable }) => {
     server.use(

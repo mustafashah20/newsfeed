@@ -3,8 +3,11 @@ import { htmlToText, nonEmpty, normalizeAuthor } from '@/lib/text';
 import { toHttpUrl } from '@/lib/url';
 
 import { fromProviderCategory } from '../../categories';
-import type { Article } from '../../types';
-import { guardianItemSchema } from './schema';
+import { toPreviewDetail } from '../../preview';
+import type { Article, ArticleDetail } from '../../types';
+import { parseGuardianBody } from './body-parser';
+import { guardianDetailSchema, guardianItemSchema } from './schema';
+import type { GuardianDetail } from './schema';
 
 export const GUARDIAN_SOURCE_NAME = 'The Guardian';
 
@@ -33,4 +36,29 @@ export function toGuardianArticle(raw: unknown): Article | null {
     provider: 'guardian',
     sourceName: GUARDIAN_SOURCE_NAME,
   };
+}
+
+/** The widest https asset of the main image element. */
+function heroImageOf(elements: GuardianDetail['elements']): string | null {
+  const main = elements?.find((e) => e.relation === 'main' && e.type === 'image');
+  let best: { url: string; width: number } | null = null;
+  for (const asset of main?.assets ?? []) {
+    const url = toHttpUrl(asset.typeData?.secureFile ?? asset.file);
+    const width = Number(asset.typeData?.width ?? 0);
+    if (url && (!best || width > best.width)) best = { url, width };
+  }
+  return best?.url ?? null;
+}
+
+/** Single-item content → the reader's article: full body when it has text, else a preview. */
+export function toGuardianDetail(raw: unknown): ArticleDetail | null {
+  const article = toGuardianArticle(raw);
+  const detail = guardianDetailSchema.safeParse(raw);
+  if (!article || !detail.success) return null;
+
+  const withHero = { ...article, imageUrl: heroImageOf(detail.data.elements) ?? article.imageUrl };
+  const blocks = parseGuardianBody(detail.data.fields?.body);
+  // Interactives and videos can have an empty body: show what the list gave us instead.
+  if (blocks.length === 0) return toPreviewDetail(withHero);
+  return { ...withHero, blocks, isFullText: true };
 }

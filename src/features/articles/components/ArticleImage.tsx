@@ -6,10 +6,12 @@ import { cn } from '@/lib/utils';
 type ArticleImageProps = {
   src: string | null;
   className?: string;
+  /** The page's main image (reader hero): load it right away instead of lazily. */
+  priority?: boolean;
 };
 
 // Decorative (alt=""): the title right below says what the article is.
-export function ArticleImage({ src, className }: ArticleImageProps) {
+export function ArticleImage({ src, className, priority = false }: ArticleImageProps) {
   const [failed, setFailed] = useState(false);
 
   if (!src || failed) {
@@ -31,7 +33,8 @@ export function ArticleImage({ src, className }: ArticleImageProps) {
       alt=""
       width={640}
       height={360}
-      loading="lazy"
+      loading={priority ? 'eager' : 'lazy'}
+      fetchPriority={priority ? 'high' : 'auto'}
       decoding="async"
       referrerPolicy="no-referrer"
       onError={() => {

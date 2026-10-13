@@ -28,3 +28,35 @@ export const guardianSearchSchema = z.looseObject({
     results: z.array(z.unknown()),
   }),
 });
+
+const imageAssetSchema = z.looseObject({
+  file: z.string().optional(),
+  typeData: z
+    .looseObject({
+      secureFile: z.string().optional(),
+      width: z.union([z.string(), z.number()]).optional(), // "1000" in real responses
+    })
+    .optional(),
+});
+
+/** Single item (`GET /{id}`): wrapped in response.content, with the body and image elements. */
+export const guardianItemResponseSchema = z.looseObject({
+  response: z.looseObject({
+    status: z.literal('ok'),
+    content: z.unknown(),
+  }),
+});
+
+export const guardianDetailSchema = z.looseObject({
+  fields: z.looseObject({ body: z.string().optional() }).optional(),
+  elements: z
+    .array(
+      z.looseObject({
+        relation: z.string().optional(),
+        type: z.string().optional(),
+        assets: z.array(imageAssetSchema).optional(),
+      }),
+    )
+    .optional(),
+});
+export type GuardianDetail = z.infer<typeof guardianDetailSchema>;

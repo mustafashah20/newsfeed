@@ -37,3 +37,17 @@ export async function searchNyt(query: ProviderQuery, page: number, signal: Abor
   });
   return data;
 }
+
+/** `_id:"nyt://article/<uuid>"`: the verified way to look one article up (1 request). */
+export function buildNytIdFilter(id: string) {
+  // Escape quotes and backslashes so the id can't break out of the quoted Lucene term.
+  return `_id:"${id.replace(/["\\]/g, '\\$&')}"`;
+}
+
+export async function fetchNytById(id: string, signal: AbortSignal) {
+  const { data } = await client.get<unknown>('/articlesearch.json', {
+    params: { fq: buildNytIdFilter(id) },
+    signal,
+  });
+  return data;
+}

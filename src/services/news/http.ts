@@ -11,6 +11,7 @@ export type ApiErrorCode =
   | 'not_configured' // the proxy has no key for this provider
   | 'unauthorized' // 401/403: bad or disabled key
   | 'rate_limited' // 429
+  | 'not_found' // 404, or a lookup that matched nothing
   | 'timeout'
   | 'network'
   | 'server' // 5xx
@@ -145,6 +146,7 @@ const errorBodySchema = z.looseObject({ code: z.string().optional() });
 function codeForFailure(status: number, body: unknown): ApiErrorCode {
   if (errorBodySchema.safeParse(body).data?.code === NOT_CONFIGURED_CODE) return 'not_configured';
   if (status === 401 || status === 403) return 'unauthorized';
+  if (status === 404) return 'not_found';
   if (status === 429) return 'rate_limited';
   if (status >= 500) return 'server';
   return 'http';
