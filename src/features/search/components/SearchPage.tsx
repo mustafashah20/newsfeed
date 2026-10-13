@@ -1,7 +1,9 @@
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/button';
 import { ArticleResults, EmptyState, ReaderLink, useAggregatedArticles } from '@/features/articles';
+import { FollowAuthorButton, useFollowedAuthors } from '@/features/preferences';
 import { PROVIDER_IDS } from '@/services/news/types';
+import type { Article } from '@/services/news/types';
 
 import { useSearchFilters } from '../hooks/useSearchFilters';
 import { hasActiveFilters, toProviderQuery } from '../search-params';
@@ -17,6 +19,7 @@ export function SearchPage() {
     query: toProviderQuery(filters),
     providers: filters.sources,
   });
+  const follow = useFollowedAuthors();
   const filtersActive = hasActiveFilters(filters);
   const activeCount = [
     filters.from || filters.to,
@@ -25,6 +28,20 @@ export function SearchPage() {
   ].filter(Boolean).length;
 
   const panel = <FiltersPanel filters={filters} onChange={updateFilters} />;
+
+  function renderActions(article: Article) {
+    const { author } = article;
+    if (!author) return null;
+    return (
+      <FollowAuthorButton
+        author={author}
+        isFollowing={follow.isFollowing(author)}
+        onToggle={() => {
+          follow.toggle(author);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -54,6 +71,7 @@ export function SearchPage() {
           <ArticleResults
             results={results}
             TitleLink={ReaderLink}
+            renderActions={renderActions}
             emptyState={
               <EmptyState
                 title="No articles match"

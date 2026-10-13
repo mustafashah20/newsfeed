@@ -2,6 +2,8 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll } from 'vitest';
 
+import { usePreferences } from '@/features/preferences';
+
 import { server } from './msw/server';
 
 // Tests never reach the real APIs: any request without a handler fails the test.
@@ -18,6 +20,12 @@ afterAll(() => {
 // Vitest globals are off, so RTL can't register its own auto-cleanup.
 afterEach(() => {
   cleanup();
+});
+
+// Every test starts with default preferences and empty storage.
+afterEach(() => {
+  localStorage.clear();
+  usePreferences.setState(usePreferences.getInitialState());
 });
 
 // jsdom doesn't implement these; the router's scroll restoration, Sonner and Radix

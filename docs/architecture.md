@@ -187,13 +187,16 @@ Every article is read inside the app. Only the Guardian's API returns full text;
 
 ```ts
 type Preferences = {
-  sources: ProviderId[];   // default: all three
-  categories: Category[];  // default: [] = all
-  authors: string[];       // normalized, case-insensitive unique
+  sources: ProviderId[];        // default: all three
+  categories: Category[];       // default: [] = all
+  authors: string[];            // normalized, case-insensitive unique
+  feedHintDismissed: boolean;   // first-visit "personalize your feed" hint
 };
 ```
 
-- Actions: `toggleSource`, `setCategories`, `addAuthor`, `removeAuthor`, `reset`. `persist` with `name: 'news-prefs'`, `version: 1`, `migrate`.
+- Actions: `toggleSource`, `setCategories`, `addAuthor` (returns false for blank/duplicate), `removeAuthor`, `dismissFeedHint`, `reset` (keeps the hint dismissed). `persist` with `name: 'news-prefs'`, `version: 1`, `migrate` (identity until v2), and a `merge` that validates the stored state with Zod field by field (localStorage is external data) and re-normalizes authors.
 - Components read with selectors (`usePreferences((s) => s.sources)`), never the whole store.
 - At least one source must stay selected.
-- **Authors:** no API filters by author consistently. The feed fetches by preferred sources + categories; on the client, articles by followed authors get a "Following" badge and move to the top of their batch, and an "Only followed authors" toggle filters to them. Authors can be followed from an `ArticleCard` (`FollowAuthorButton`) or typed in on `/preferences`.
+- **Authors:** no API filters by author consistently. The feed fetches by preferred sources + categories; on the client, articles by followed authors move to the top of their batch (`useAggregatedArticles({ authors })` → `mergeBatch(..., isPriority)`), and an "Only followed authors" switch filters to them. The switch is shareable view state, so it lives in the URL (`/?following=true`, `features/feed/feed-params.ts`), not in the store. Authors can be followed from any `ArticleCard` on the feed or search (`FollowAuthorButton`, an `aria-pressed` toggle that reads "Following" and doubles as the badge) or typed in on `/preferences`.
+- Matching (`lib/authors.ts`): bylines are split into people ("A, B", "A and B", "A & B"), and names compare case- and spacing-insensitively. Following a multi-author byline follows each person; an article counts as followed if any of its authors is.
+- `useFeedParams` turns preferences into the feed's `query`/`sources`/`authors`, reads `following` from the URL, and decides the first-visit hint (shown until dismissed, and only while the feed is still the default one).

@@ -1,6 +1,7 @@
 import { useQueries, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
+import { isByFollowedAuthor } from '@/lib/authors';
 import { articleKeys, normalizeQuery } from '@/services/news/query-keys';
 import { providers } from '@/services/news/registry';
 import type { Article, ProviderId, ProviderPage, ProviderQuery } from '@/services/news/types';
@@ -15,6 +16,8 @@ export type SourceState = { provider: ProviderId; label: string } & SourceStatus
 type AggregatedArticlesOptions = {
   query: ProviderQuery;
   providers: readonly ProviderId[];
+  /** Followed authors: their articles move to the top of each batch. */
+  authors?: readonly string[];
 };
 
 // NYT allows 5 requests a minute: keep its pages fresh for longer than the app default.
@@ -26,7 +29,11 @@ type PageRef = { provider: ProviderId; page: number };
  * Articles from several providers, merged page by page. Each provider × page is its own query,
  * so sources cache and fail independently and toggling one never refetches the others.
  */
-export function useAggregatedArticles({ query, providers: selected }: AggregatedArticlesOptions) {
+export function useAggregatedArticles({
+  query,
+  providers: selected,
+  authors = [],
+}: AggregatedArticlesOptions) {
   const queryClient = useQueryClient();
 
   // Paging restarts when the filters change: compare a key during render instead of syncing
@@ -67,7 +74,7 @@ export function useAggregatedArticles({ query, providers: selected }: Aggregated
   for (const { page, result } of entries) {
     if (result?.data) batches[page - 1]?.push(...result.data.articles);
   }
-  const articles = combineBatches(batches);
+  const articles = combineBatches(batches, (a) => isByFollowedAuthor(a.author, authors));
 
   const sources: SourceState[] = selected.map((provider) => {
     const own = entries.filter((e) => e.provider === provider);

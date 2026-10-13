@@ -20,8 +20,13 @@ export function normalizeUrl(url: string): string {
 
 const newestFirst = (a: Article, b: Article) => b.publishedAt.localeCompare(a.publishedAt);
 
-/** One batch (page n of every provider): dedupe by URL (first provider wins), newest first. */
-export function mergeBatch(articles: readonly Article[]): Article[] {
+export type ArticlePredicate = (article: Article) => boolean;
+
+/**
+ * One batch (page n of every provider): dedupe by URL (first provider wins), newest first.
+ * Articles matching `isPriority` (e.g. by a followed author) move to the top of the batch.
+ */
+export function mergeBatch(articles: readonly Article[], isPriority?: ArticlePredicate): Article[] {
   const seen = new Set<string>();
   const unique = articles.filter((article) => {
     const key = normalizeUrl(article.url);
@@ -29,18 +34,24 @@ export function mergeBatch(articles: readonly Article[]): Article[] {
     seen.add(key);
     return true;
   });
-  return unique.sort(newestFirst);
+  unique.sort(newestFirst);
+  if (!isPriority) return unique;
+  // Stable: each group keeps its newest-first order.
+  return [...unique.filter(isPriority), ...unique.filter((a) => !isPriority(a))];
 }
 
 /**
  * Batches in page order, each merged on its own and appended, so "Load more" never reshuffles
  * what's already shown. An article already shown in an earlier batch is skipped.
  */
-export function combineBatches(batches: readonly (readonly Article[])[]): Article[] {
+export function combineBatches(
+  batches: readonly (readonly Article[])[],
+  isPriority?: ArticlePredicate,
+): Article[] {
   const seen = new Set<string>();
   const result: Article[] = [];
   for (const batch of batches) {
-    for (const article of mergeBatch(batch)) {
+    for (const article of mergeBatch(batch, isPriority)) {
       const key = normalizeUrl(article.url);
       if (seen.has(key)) continue;
       seen.add(key);
