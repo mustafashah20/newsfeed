@@ -133,6 +133,7 @@ export default defineConfig(({ mode }) => {
               { name: 'react', test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/ },
               { name: 'tanstack', test: /node_modules[\\/]@tanstack[\\/]/ },
               { name: 'zod', test: /node_modules[\\/]zod[\\/]/ },
+              { name: 'data', test: /node_modules[\\/](axios|date-fns)[\\/]/ },
               {
                 name: 'ui',
                 test: /node_modules[\\/](radix-ui|@radix-ui|sonner|cn|lucide-react|react-remove-scroll[^\\/]*)[\\/]/,

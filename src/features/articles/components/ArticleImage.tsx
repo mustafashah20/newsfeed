@@ -1,0 +1,43 @@
+import { NewspaperIcon } from 'lucide-react';
+import { useState } from 'react';
+
+import { cn } from '@/lib/utils';
+
+type ArticleImageProps = {
+  src: string | null;
+  className?: string;
+};
+
+// Decorative (alt=""): the title right below says what the article is.
+export function ArticleImage({ src, className }: ArticleImageProps) {
+  const [failed, setFailed] = useState(false);
+
+  if (!src || failed) {
+    return (
+      <div
+        className={cn(
+          'flex aspect-video w-full items-center justify-center bg-muted text-muted-foreground',
+          className,
+        )}
+      >
+        <NewspaperIcon aria-hidden="true" className="size-8" />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt=""
+      width={640}
+      height={360}
+      loading="lazy"
+      decoding="async"
+      referrerPolicy="no-referrer"
+      onError={() => {
+        setFailed(true);
+      }}
+      className={cn('aspect-video w-full bg-muted object-cover', className)}
+    />
+  );
+}

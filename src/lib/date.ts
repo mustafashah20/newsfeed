@@ -1,6 +1,8 @@
 import {
+  differenceInSeconds,
   endOfDay,
   format,
+  formatDistanceStrict,
   isAfter,
   isBefore,
   isValid,
@@ -8,6 +10,18 @@ import {
   startOfDay,
   subDays,
 } from 'date-fns';
+
+/** "3 hours ago", "2 days ago"; "just now" for the first minute (and for clock skew). */
+export function timeAgo(iso: string, now = new Date()) {
+  const date = parseISO(iso);
+  if (differenceInSeconds(now, date) < 60) return 'just now';
+  return formatDistanceStrict(date, now, { addSuffix: true });
+}
+
+/** "13 Oct 2026, 14:15" for tooltips and screen readers. */
+export function formatFullDate(iso: string) {
+  return format(parseISO(iso), 'd MMM yyyy, HH:mm');
+}
 
 /** An ISO 8601 timestamp normalized to UTC (`…Z`), or null if it doesn't parse. */
 export function toIsoDateTime(value: string | null | undefined): string | null {

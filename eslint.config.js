@@ -39,6 +39,19 @@ export default defineConfig([
     rules: {
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
+      // TanStack Router signals 404s/redirects by throwing these (not Errors) from route options.
+      '@typescript-eslint/only-throw-error': [
+        'error',
+        {
+          allow: [
+            {
+              from: 'package',
+              package: '@tanstack/router-core',
+              name: ['NotFoundError', 'Redirect'],
+            },
+          ],
+        },
+      ],
       'no-restricted-imports': ['error', { patterns: [FEATURE_INTERNALS], paths: [AXIOS] }],
     },
   },

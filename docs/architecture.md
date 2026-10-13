@@ -125,6 +125,8 @@ Each provider is cached and fails independently, so toggling one source never re
 - Partial failure: if NYT returns 429, the others still render and `SourceStatusBar` shows a warning chip with Retry.
 - Merge/dedupe/sort are pure functions in `features/articles/lib/merge.ts`, unit-tested.
 - "Load more" button. Infinite scroll (backlog) would be an `IntersectionObserver` sentinel calling the same `loadMore()`.
+- `pageCount` resets without an effect: the hook stores `{ key, count }` and treats the count as 1 whenever the current filter key differs. NYT pages get a 15 min `staleTime` (5 req/min limit).
+- `ArticleResults` renders every state from the hook's result (skeleton, all-failed `ErrorState` with Retry, the page's empty state, list + count + Load more) and the `SourceStatusBar` above them; feed and search both use it.
 
 ## Search URL state (`features/search/search-params.ts`)
 
@@ -155,7 +157,7 @@ Every article is read inside the app. Only the Guardian's API returns full text;
 | NewsAPI | Image, title, byline, description + truncated content (`isFullText: false`) + `PreviewNotice` | Only if the preview is in the Query cache (NewsAPI has no lookup by id) |
 
 **Data flow**
-1. Clicking a card seeds the cache: `queryClient.setQueryData(articleKeys.preview(provider, externalId), toPreviewDetail(article))`. `toPreviewDetail` (pure, `services/news/preview.ts`) turns `description` + `excerpt` into `paragraph` blocks with `isFullText: false`. The card itself stays presentational: the parent passes an `onOpen` callback that does the seeding.
+1. Clicking a card seeds the cache: `queryClient.setQueryData(articleKeys.preview(provider, externalId), toPreviewDetail(article))`. `toPreviewDetail` (pure, `services/news/preview.ts`) turns `description` + `excerpt` into `paragraph` blocks with `isFullText: false`. The card itself stays presentational: it receives its title link as a `TitleLink` component prop, and the app passes `ReaderLink` (`features/articles/components/ReaderLink.tsx`), which renders the router `<Link>` and does the seeding on click. Tests pass a plain `<a>`.
 2. `useArticle(provider, externalId)` reads the preview from `articleKeys.preview(...)` (cache only, never fetched) and the detail query at `articleKeys.detail(...)`:
    - The detail query is enabled when the provider implements `ArticleDetailSource` and either `providesFullText` is true (Guardian) or no preview is cached (NYT direct load). `queryFn` calls `fetchArticle`; `placeholderData` is the cached preview, so it shows instantly while the full body loads. `staleTime: 30 min`.
    - Result: fetched detail if present, otherwise the preview. If neither exists and no fetch is possible (NewsAPI direct load/refresh), return `status: 'unavailable'` so the page renders `ReaderUnavailable`.

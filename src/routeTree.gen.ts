@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PreferencesRouteImport } from './routes/preferences'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as ArticleProviderRouteImport } from './routes/article.$provider'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,44 @@ const SearchRoute = SearchRouteImport.update({
   path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArticleProviderRoute = ArticleProviderRouteImport.update({
+  id: '/article/$provider',
+  path: '/article/$provider',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/preferences': typeof PreferencesRoute
   '/search': typeof SearchRoute
+  '/article/$provider': typeof ArticleProviderRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/preferences': typeof PreferencesRoute
   '/search': typeof SearchRoute
+  '/article/$provider': typeof ArticleProviderRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/preferences': typeof PreferencesRoute
   '/search': typeof SearchRoute
+  '/article/$provider': typeof ArticleProviderRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/preferences' | '/search'
+  fullPaths: '/' | '/preferences' | '/search' | '/article/$provider'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/preferences' | '/search'
-  id: '__root__' | '/' | '/preferences' | '/search'
+  to: '/' | '/preferences' | '/search' | '/article/$provider'
+  id: '__root__' | '/' | '/preferences' | '/search' | '/article/$provider'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PreferencesRoute: typeof PreferencesRoute
   SearchRoute: typeof SearchRoute
+  ArticleProviderRoute: typeof ArticleProviderRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/article/$provider': {
+      id: '/article/$provider'
+      path: '/article/$provider'
+      fullPath: '/article/$provider'
+      preLoaderRoute: typeof ArticleProviderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PreferencesRoute: PreferencesRoute,
   SearchRoute: SearchRoute,
+  ArticleProviderRoute: ArticleProviderRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
