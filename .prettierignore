@@ -1,0 +1,8 @@
+dist
+coverage
+package-lock.json
+src/routeTree.gen.ts
+# shadcn-generated; keep as the CLI writes them so re-adding gives clean diffs.
+src/components/ui
+# Hand-written docs; keep their formatting as authored.
+*.md
