@@ -22,7 +22,12 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
   }
 
   return (
-    <form role="search" onSubmit={handleSubmit} className={cn('flex min-w-0 gap-2', className)}>
+    <form
+      role="search"
+      aria-label="Site search"
+      onSubmit={handleSubmit}
+      className={cn('flex min-w-0 gap-2', className)}
+    >
       <label htmlFor="header-search" className="sr-only">
         Search news
       </label>

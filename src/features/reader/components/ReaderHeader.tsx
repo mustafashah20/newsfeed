@@ -27,7 +27,9 @@ export function ReaderHeader({ article, actions, now }: ReaderHeaderProps) {
           <time dateTime={article.publishedAt} title={formatFullDate(article.publishedAt)}>
             {timeAgo(article.publishedAt, now)}
           </time>
-          <Badge variant="secondary">{article.sourceName}</Badge>
+          <Badge variant="secondary" className="max-w-full truncate">
+            {article.sourceName}
+          </Badge>
           {article.category && <span>{categoryLabel(article.category)}</span>}
         </p>
         {actions}

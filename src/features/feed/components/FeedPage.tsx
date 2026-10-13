@@ -21,6 +21,7 @@ export function FeedPage() {
     authors: feed.authors,
   });
   const switchId = useId();
+  const followSwitchDisabled = feed.authors.length === 0 && !feed.onlyFollowed;
 
   const editPreferences = (
     <Button asChild variant="outline" className="h-11 px-4">
@@ -53,16 +54,25 @@ export function FeedPage() {
         title="Your feed"
         description="The latest articles from your preferred sources and categories."
       >
-        <div className="flex min-h-11 items-center gap-3">
-          <Switch
-            id={switchId}
-            checked={feed.onlyFollowed}
-            disabled={feed.authors.length === 0 && !feed.onlyFollowed}
-            onCheckedChange={feed.setOnlyFollowed}
-          />
-          <label htmlFor={switchId} className="text-sm">
-            Only followed authors
-          </label>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-3">
+            <Switch
+              id={switchId}
+              checked={feed.onlyFollowed}
+              disabled={followSwitchDisabled}
+              aria-describedby={followSwitchDisabled ? `${switchId}-hint` : undefined}
+              onCheckedChange={feed.setOnlyFollowed}
+            />
+            {/* The label is the touch target: full 44 px row. */}
+            <label htmlFor={switchId} className="flex min-h-11 items-center text-sm">
+              Only followed authors
+            </label>
+          </div>
+          {followSwitchDisabled && (
+            <p id={`${switchId}-hint`} className="text-xs text-muted-foreground">
+              Follow an author to use this.
+            </p>
+          )}
         </div>
       </PageHeader>
 
