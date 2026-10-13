@@ -1,0 +1,87 @@
+# Newsfeed: serves the built SPA and proxies /api/<provider>/* with the API keys.
+#
+# The nginx image runs envsubst on this template at startup, replacing only variables that are
+# defined in the environment (so $uri, $args… are untouched). docker-compose.yml always defines
+# NEWSAPI_KEY, GUARDIAN_API_KEY and NYT_API_KEY (empty if unset); an undefined one would stay
+# as a literal ${...} here and nginx would refuse to start. Keys are injected at runtime, never
+# baked into the image.
+
+server {
+  listen 8080;
+  server_tokens off;
+  root /usr/share/nginx/html;
+  index index.html;
+
+  # Shared security headers. add_header is not inherited once a location sets its own, so the
+  # locations below that add headers include this file again.
+  include /etc/nginx/conf.d/security-headers.inc;
+
+  location / {
+    # SPA: unknown paths are client routes.
+    try_files $uri $uri/ /index.html;
+    # index.html must always be revalidated so new deploys take effect.
+    add_header Cache-Control "no-cache" always;
+    include /etc/nginx/conf.d/security-headers.inc;
+  }
+
+  # Vite's hashed bundles never change under the same name.
+  location /assets/ {
+    # One header (`expires` would add a second Cache-Control).
+    add_header Cache-Control "public, max-age=31536000, immutable" always;
+    include /etc/nginx/conf.d/security-headers.inc;
+  }
+
+  # ---- API proxy ------------------------------------------------------------------------------
+  # Missing key → 503 {"code":"not_configured"} without contacting the provider (same contract
+  # as the Vite dev proxy; the app shows "{Source} isn't configured").
+  # Upstream errors are logged with the full upstream URL, which carries the Guardian/NYT key, so
+  # these locations only log critical errors.
+
+  location /api/newsapi/ {
+    error_log /dev/stderr crit;
+    default_type application/json;
+    set $newsapi_key "${NEWSAPI_KEY}";
+    if ($newsapi_key = "") {
+      return 503 '{"status":"error","code":"not_configured","message":"API key not configured"}';
+    }
+    proxy_pass https://newsapi.org/v2/;
+    proxy_ssl_server_name on;
+    proxy_set_header Host newsapi.org;
+    proxy_set_header X-Api-Key $newsapi_key;
+    # The free plan rejects browser-originated requests.
+    proxy_set_header Origin "";
+    proxy_set_header Referer "";
+  }
+
+  location /api/guardian/ {
+    error_log /dev/stderr crit;
+    default_type application/json;
+    set $guardian_key "${GUARDIAN_API_KEY}";
+    if ($guardian_key = "") {
+      return 503 '{"status":"error","code":"not_configured","message":"API key not configured"}';
+    }
+    # `set` must come before `rewrite ... break`: break stops all later rewrite-module directives.
+    set $args "$args&api-key=$guardian_key";
+    rewrite ^/api/guardian/(.*)$ /$1 break;
+    proxy_pass https://content.guardianapis.com;
+    proxy_ssl_server_name on;
+    proxy_set_header Host content.guardianapis.com;
+  }
+
+  location /api/nyt/ {
+    error_log /dev/stderr crit;
+    default_type application/json;
+    set $nyt_key "${NYT_API_KEY}";
+    if ($nyt_key = "") {
+      return 503 '{"status":"error","code":"not_configured","message":"API key not configured"}';
+    }
+    set $args "$args&api-key=$nyt_key";
+    rewrite ^/api/nyt/(.*)$ /svc/search/v2/$1 break;
+    proxy_pass https://api.nytimes.com;
+    proxy_ssl_server_name on;
+    proxy_set_header Host api.nytimes.com;
+  }
+
+  gzip on;
+  gzip_types text/css application/javascript application/json image/svg+xml;
+}

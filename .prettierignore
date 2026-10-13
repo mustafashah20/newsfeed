@@ -4,5 +4,7 @@ package-lock.json
 src/routeTree.gen.ts
 # shadcn-generated; keep as the CLI writes them so re-adding gives clean diffs.
 src/components/ui
+# nginx config: Prettier has no parser for it and would reflow it as Markdown, breaking it.
+nginx
 # Hand-written docs; keep their formatting as authored.
 *.md

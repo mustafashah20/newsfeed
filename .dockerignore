@@ -1,0 +1,16 @@
+# Secrets: never in the build context or the image.
+.env
+.env.*
+!.env.example
+
+# Rebuilt inside the image or not needed there.
+node_modules
+dist
+coverage
+.git
+.claude
+docs
+*.md
+Dockerfile
+docker-compose.yml
+.dockerignore

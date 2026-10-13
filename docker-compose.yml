@@ -1,0 +1,22 @@
+services:
+  web:
+    build: .
+    ports:
+      - '8080:8080'
+    # Compose reads .env for ${...} interpolation. `:-` makes a missing key an empty string, so
+    # every variable is always defined: nginx then answers 503 not_configured for that source
+    # instead of failing to start on an unsubstituted ${VAR} in its config.
+    environment:
+      NEWSAPI_KEY: ${NEWSAPI_KEY:-}
+      GUARDIAN_API_KEY: ${GUARDIAN_API_KEY:-}
+      NYT_API_KEY: ${NYT_API_KEY:-}
+    healthcheck:
+      # 127.0.0.1, not localhost: in the container localhost resolves to ::1 first, and nginx
+      # listens on IPv4 only.
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:8080/ > /dev/null || exit 1']
+      start_period: 5s
+      start_interval: 2s
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
