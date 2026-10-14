@@ -35,6 +35,13 @@ describe('app shell and routing', () => {
     expect(await screen.findByRole('heading', { name: 'Search' })).toBeInTheDocument();
   });
 
+  it('hides the header search on the search page, which has its own', async () => {
+    renderApp('/search');
+
+    expect(await screen.findByRole('searchbox', { name: 'Keyword' })).toBeInTheDocument();
+    expect(screen.queryByRole('searchbox', { name: 'Search news' })).toBeNull();
+  });
+
   it('marks the current page in the main navigation', async () => {
     renderApp('/preferences');
 

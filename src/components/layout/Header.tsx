@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useMatchRoute } from '@tanstack/react-router';
 import { NewspaperIcon } from 'lucide-react';
 
 import { HeaderSearch } from './HeaderSearch';
@@ -6,6 +6,10 @@ import { MobileNav } from './MobileNav';
 import { NavLinks } from './NavLinks';
 
 export function Header() {
+  const matchRoute = useMatchRoute();
+  // The search page has its own search bar; a second one in the header is redundant there.
+  const isSearchPage = Boolean(matchRoute({ to: '/search' }));
+
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2 sm:px-6 lg:px-8">
@@ -19,7 +23,9 @@ export function Header() {
         <nav aria-label="Main" className="hidden md:block">
           <NavLinks />
         </nav>
-        <HeaderSearch className="order-last w-full md:order-none md:ml-auto md:w-auto md:max-w-sm md:flex-1" />
+        {isSearchPage ? null : (
+          <HeaderSearch className="order-last w-full md:order-none md:ml-auto md:w-auto md:max-w-sm md:flex-1" />
+        )}
         <MobileNav className="ml-auto md:hidden" />
       </div>
     </header>
