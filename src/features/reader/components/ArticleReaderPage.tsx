@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { providers } from '@/services/news/registry';
 
 import { useArticle } from '../hooks/useArticle';
-import { READER_GRID, READER_MAIN } from '../layout';
+import { READER_COLUMN } from '../layout';
 import { ArticleBody } from './ArticleBody';
 import { PreviewNotice } from './PreviewNotice';
 import { ReaderAttribution } from './ReaderAttribution';
@@ -69,28 +69,26 @@ export function ArticleReaderPage() {
   const { article, isLoadingFullText, fullTextError } = state;
 
   return (
-    // Same page width and edges as the feed and search (AppShell's container); the body keeps
-    // to the main column so lines stay a readable length.
-    <article className={PAGE_STACK_CLASS}>
+    // One centred column for everything (features/reader/layout.ts), so the image is exactly as
+    // wide as the title and body.
+    <article className={cn(PAGE_STACK_CLASS, READER_COLUMN)}>
       {back}
       <ReaderHeader article={article} />
-      <div className={READER_GRID}>
-        <div className={cn(READER_MAIN, 'flex min-w-0 flex-col gap-6')}>
-          <ArticleBody blocks={article.blocks} />
-          {isLoadingFullText && <ReaderSkeleton bodyOnly />}
-          {Boolean(fullTextError) && (
-            <div role="alert" className="flex flex-wrap items-center gap-2 text-sm">
-              <span>{describeSourceError(fullTextError, providerLabel).message}.</span>
-              <Button variant="outline" className="h-11 px-4" onClick={state.retry}>
-                Retry
-              </Button>
-            </div>
-          )}
-          {!article.isFullText && !isLoadingFullText && (
-            <PreviewNotice providerLabel={providerLabel} />
-          )}
-          <ReaderAttribution sourceName={article.sourceName} url={article.url} />
-        </div>
+      <div className="flex flex-col gap-6">
+        <ArticleBody blocks={article.blocks} />
+        {isLoadingFullText && <ReaderSkeleton bodyOnly />}
+        {Boolean(fullTextError) && (
+          <div role="alert" className="flex flex-wrap items-center gap-2 text-sm">
+            <span>{describeSourceError(fullTextError, providerLabel).message}.</span>
+            <Button variant="outline" className="h-11 px-4" onClick={state.retry}>
+              Retry
+            </Button>
+          </div>
+        )}
+        {!article.isFullText && !isLoadingFullText && (
+          <PreviewNotice providerLabel={providerLabel} />
+        )}
+        <ReaderAttribution sourceName={article.sourceName} url={article.url} />
       </div>
     </article>
   );

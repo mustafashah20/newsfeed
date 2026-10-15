@@ -2,7 +2,7 @@ import { PAGE_STACK_CLASS } from '@/components/layout/page-styles';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
-import { READER_GRID, READER_MAIN, READER_SIDE } from '../layout';
+import { READER_COLUMN, READER_HERO } from '../layout';
 
 type ReaderSkeletonProps = {
   /** Only the body lines, under an already-shown header (full text loading). */
@@ -10,7 +10,7 @@ type ReaderSkeletonProps = {
 };
 
 const bodyLines = (
-  <div className="flex max-w-prose flex-col gap-3">
+  <div className="flex flex-col gap-3">
     <Skeleton className="h-5 w-full" />
     <Skeleton className="h-5 w-full" />
     <Skeleton className="h-5 w-11/12" />
@@ -31,20 +31,18 @@ export function ReaderSkeleton({ bodyOnly = false }: ReaderSkeletonProps) {
   }
 
   return (
-    <div role="status" aria-busy="true" className={PAGE_STACK_CLASS}>
+    <div role="status" aria-busy="true" className={cn(PAGE_STACK_CLASS, READER_COLUMN)}>
       <span className="sr-only">Loading article…</span>
       <Skeleton className="h-11 w-24" />
-      <div className={cn(READER_GRID, 'lg:items-center')}>
-        <Skeleton className={cn(READER_MAIN, 'aspect-16/10 w-full rounded-md')} />
-        <div className={cn(READER_SIDE, 'flex flex-col gap-3')}>
+      <div className="flex flex-col gap-6 md:gap-8">
+        <div className="flex flex-col gap-3">
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-10 w-3/4" />
           <Skeleton className="h-4 w-1/2" />
         </div>
+        <Skeleton className={cn(READER_HERO, 'w-full')} />
       </div>
-      <div className={READER_GRID}>
-        <div className={READER_MAIN}>{bodyLines}</div>
-      </div>
+      {bodyLines}
     </div>
   );
 }

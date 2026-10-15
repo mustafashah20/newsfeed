@@ -25,7 +25,8 @@ export function ArticleBody({ blocks }: ArticleBodyProps) {
   if (blocks.length === 0) return null;
 
   return (
-    <div className="flex max-w-prose flex-col gap-5 text-base leading-relaxed break-words sm:text-lg sm:leading-8">
+    // The reader's column sets the line length (features/reader/layout.ts).
+    <div className="flex flex-col gap-5 text-base leading-relaxed break-words sm:text-lg sm:leading-8">
       {groupBlocks(blocks).map((group) => {
         if (group.kind === 'list') {
           return (
