@@ -1,5 +1,4 @@
-export { PreferencesPage } from './components/PreferencesPage';
-export { FollowAuthorButton } from './components/FollowAuthorButton';
-export { useFollowedAuthors } from './hooks/useFollowedAuthors';
+export { PreferencesDialog } from './components/PreferencesDialog';
+export { useEditablePreferences } from './hooks/useEditablePreferences';
 export { usePreferences } from './store';
 export type { Preferences } from './store';

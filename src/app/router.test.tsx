@@ -42,28 +42,44 @@ describe('app shell and routing', () => {
     expect(screen.queryByRole('searchbox', { name: 'Search news' })).toBeNull();
   });
 
-  it('marks the current page in the main navigation', async () => {
-    renderApp('/preferences');
+  it('keeps the header to the wordmark and search bar, with Preferences on the feed', async () => {
+    renderApp('/');
 
-    const nav = await screen.findByRole('navigation', { name: 'Main' });
-    expect(within(nav).getByRole('link', { name: 'Preferences' })).toHaveAttribute(
+    const header = await screen.findByRole('banner');
+    expect(within(header).getByRole('link', { name: 'Newsfeed' })).toHaveAttribute('href', '/');
+    expect(within(header).getByRole('searchbox', { name: 'Search news' })).toBeInTheDocument();
+    // No nav links or Preferences in the header.
+    expect(within(header).queryByRole('navigation')).toBeNull();
+    expect(within(header).queryByRole('button', { name: 'Preferences' })).toBeNull();
+
+    // Preferences sits beside the feed's chips, labelled, not just an icon.
+    const main = screen.getByRole('main');
+    expect(within(main).getByRole('button', { name: 'Preferences' })).toHaveAttribute(
+      'aria-haspopup',
+      'dialog',
+    );
+    const tabs = screen.getByRole('navigation', { name: 'Tabs' });
+    expect(within(tabs).getByRole('link', { name: 'Feed' })).toHaveAttribute(
       'aria-current',
       'page',
     );
-    expect(within(nav).getByRole('link', { name: 'Feed' })).not.toHaveAttribute('aria-current');
   });
 
-  it('navigates from the mobile menu and closes it', async () => {
+  it('navigates from the bottom tab bar', async () => {
     const { user } = renderApp('/');
 
-    await user.click(await screen.findByRole('button', { name: 'Open menu' }));
-    const menu = await screen.findByRole('dialog', { name: 'Menu' });
-    await user.click(within(menu).getByRole('link', { name: 'Preferences' }));
+    const tabs = await screen.findByRole('navigation', { name: 'Tabs' });
+    expect(within(tabs).getByRole('link', { name: 'Feed' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    await user.click(within(tabs).getByRole('link', { name: 'Search' }));
 
-    expect(await screen.findByRole('heading', { name: 'Preferences' })).toBeInTheDocument();
-    await waitFor(() => {
-      expect(screen.queryByRole('dialog', { name: 'Menu' })).not.toBeInTheDocument();
-    });
+    expect(await screen.findByRole('heading', { name: 'Search' })).toBeInTheDocument();
+    expect(within(tabs).getByRole('link', { name: 'Search' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
   });
 
   it('shows the not-found page for unknown URLs', async () => {

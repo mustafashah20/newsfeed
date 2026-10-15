@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 
 type AuthorInputProps = {
   authors: readonly string[];
-  /** Returns false when the name is empty or already followed. */
+  /** Returns false when the name is empty or already in the list. */
   onAdd: (name: string) => boolean;
   onRemove: (name: string) => void;
 };
@@ -27,7 +27,7 @@ export function AuthorInput({ authors, onAdd, onRemove }: AuthorInputProps) {
       return;
     }
     if (!onAdd(name)) {
-      setError(`You already follow ${name}.`);
+      setError(`${name} is already in your authors.`);
       return;
     }
     setError(null);
@@ -52,7 +52,7 @@ export function AuthorInput({ authors, onAdd, onRemove }: AuthorInputProps) {
           />
           <Button type="submit" className="h-11 shrink-0 px-4">
             <PlusIcon aria-hidden="true" />
-            Follow
+            Add
           </Button>
         </div>
         {error && (
@@ -63,11 +63,9 @@ export function AuthorInput({ authors, onAdd, onRemove }: AuthorInputProps) {
       </form>
 
       {authors.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          You don’t follow anyone yet. You can also follow authors from any article card.
-        </p>
+        <p className="text-sm text-muted-foreground">No authors added yet.</p>
       ) : (
-        <ul aria-label="Followed authors" className="flex flex-wrap gap-2">
+        <ul aria-label="Preferred authors" className="flex flex-wrap gap-2">
           {authors.map((author) => (
             <li
               key={author}
@@ -78,7 +76,7 @@ export function AuthorInput({ authors, onAdd, onRemove }: AuthorInputProps) {
                 variant="ghost"
                 size="icon"
                 className="size-11 shrink-0 rounded-full"
-                aria-label={`Unfollow ${author}`}
+                aria-label={`Remove ${author}`}
                 onClick={() => {
                   onRemove(author);
                 }}

@@ -1,103 +1,119 @@
-import { Link } from '@tanstack/react-router';
-import { useId } from 'react';
+import { SlidersHorizontalIcon } from 'lucide-react';
+import { useState } from 'react';
+import type { MouseEvent } from 'react';
 
-import { PageHeader } from '@/components/layout/PageHeader';
+import { PAGE_STACK_CLASS } from '@/components/layout/page-styles';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { ArticleResults, ReaderLink, useAggregatedArticles } from '@/features/articles';
-import { FollowAuthorButton, useFollowedAuthors } from '@/features/preferences';
-import type { Article } from '@/services/news/types';
+import { ReaderLink, SourceStatusBar, useAggregatedArticles } from '@/features/articles';
+import { PreferencesDialog, useEditablePreferences } from '@/features/preferences';
+import { formatDayHeading } from '@/lib/date';
+import { categoryLabel } from '@/services/news/categories';
+import { providers } from '@/services/news/registry';
 
 import { useFeedParams } from '../hooks/useFeedParams';
+import { useStoryReveal } from '../hooks/useStoryReveal';
+import { filterStories, joinNames } from '../lib/stories';
+import type { FeedChip } from './FeedChips';
+import { FeedChips } from './FeedChips';
 import { FeedEmptyState } from './FeedEmptyState';
+import { FeedHeader } from './FeedHeader';
 import { FeedHint } from './FeedHint';
+import { FeedResults } from './FeedResults';
 
 export function FeedPage() {
   const feed = useFeedParams();
-  const follow = useFollowedAuthors();
+  const editable = useEditablePreferences();
+  const [preferencesOpen, setPreferencesOpen] = useState(false);
+  const [preferencesOpener, setPreferencesOpener] = useState<HTMLElement | null>(null);
   const results = useAggregatedArticles({
     query: feed.query,
     providers: feed.sources,
     authors: feed.authors,
   });
-  const switchId = useId();
-  const followSwitchDisabled = feed.authors.length === 0 && !feed.onlyFollowed;
+  const stories = filterStories(results.articles, feed.filter);
+  const reveal = useStoryReveal({
+    total: stories.length,
+    hasMore: results.hasMore,
+    onLoadMore: results.loadMore,
+    resetKey: feed.filter ?? 'all',
+  });
 
-  const editPreferences = (
-    <Button asChild variant="outline" className="h-11 px-4">
-      <Link to="/preferences">Edit preferences</Link>
-    </Button>
-  );
+  const chips: FeedChip[] = [
+    { value: undefined, label: 'All stories' },
+    ...feed.chipCategories.map((c) => ({ value: c, label: categoryLabel(c) })),
+  ];
 
-  // Filtering by author happens here: no API filters by author consistently.
-  const visible = feed.onlyFollowed
-    ? { ...results, articles: results.articles.filter((a) => follow.isFollowing(a.author)) }
-    : results;
+  const sourceNames = joinNames(feed.sources.map((id) => providers[id].label));
+  const loaded = results.articles.length;
+  const summary =
+    loaded > 0
+      ? `${loaded} ${loaded === 1 ? 'story' : 'stories'} from ${sourceNames}`
+      : `Stories from ${sourceNames}`;
 
-  function renderActions(article: Article) {
-    const { author } = article;
-    if (!author) return null;
-    return (
-      <FollowAuthorButton
-        author={author}
-        isFollowing={follow.isFollowing(author)}
-        onToggle={() => {
-          follow.toggle(author);
-        }}
-      />
-    );
+  function openPreferences(event: MouseEvent<HTMLButtonElement>) {
+    setPreferencesOpener(event.currentTarget);
+    setPreferencesOpen(true);
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <PageHeader
-        title="Your feed"
-        description="The latest articles from your preferred sources and categories."
-      >
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-3">
-            <Switch
-              id={switchId}
-              checked={feed.onlyFollowed}
-              disabled={followSwitchDisabled}
-              aria-describedby={followSwitchDisabled ? `${switchId}-hint` : undefined}
-              onCheckedChange={feed.setOnlyFollowed}
-            />
-            {/* The label is the touch target: full 44 px row. */}
-            <label htmlFor={switchId} className="flex min-h-11 items-center text-sm">
-              Only followed authors
-            </label>
-          </div>
-          {followSwitchDisabled && (
-            <p id={`${switchId}-hint`} className="text-xs text-muted-foreground">
-              Follow an author to use this.
-            </p>
-          )}
-        </div>
-      </PageHeader>
+    <div className={PAGE_STACK_CLASS}>
+      <FeedHeader dateline={formatDayHeading()} summary={summary} />
+      {/* Preferences sits beside the chips: they show what the preferences pick. */}
+      <div className="flex items-start gap-2 md:border-b md:pb-5">
+        <FeedChips chips={chips} value={feed.filter} onChange={feed.setFilter} />
+        <Button
+          variant="outline"
+          aria-haspopup="dialog"
+          className="h-11 shrink-0 rounded-full border-input px-4"
+          onClick={openPreferences}
+        >
+          <SlidersHorizontalIcon aria-hidden="true" />
+          Preferences
+        </Button>
+      </div>
 
       {feed.showHint && (
         <FeedHint
           onDismiss={feed.dismissHint}
           action={
-            <Button asChild className="h-11 px-4">
-              <Link to="/preferences">Set preferences</Link>
+            <Button aria-haspopup="dialog" className="h-11 px-4" onClick={openPreferences}>
+              Set preferences
             </Button>
           }
         />
       )}
 
-      <ArticleResults
-        results={visible}
-        TitleLink={ReaderLink}
-        renderActions={renderActions}
-        emptyState={
-          <FeedEmptyState
-            onlyFollowed={feed.onlyFollowed}
-            followsAnyone={feed.authors.length > 0}
-            action={editPreferences}
-          />
-        }
+      <SourceStatusBar sources={results.sources} onRetry={results.retry} />
+
+      <div className="flex flex-col">
+        <FeedResults
+          results={results}
+          stories={stories}
+          reveal={reveal}
+          TitleLink={ReaderLink}
+          emptyState={
+            <FeedEmptyState filter={feed.filter}>
+              {feed.filter && (
+                <Button
+                  className="h-11 px-4"
+                  onClick={() => {
+                    feed.setFilter(undefined);
+                  }}
+                >
+                  All stories
+                </Button>
+              )}
+            </FeedEmptyState>
+          }
+        />
+      </div>
+
+      <PreferencesDialog
+        open={preferencesOpen}
+        onOpenChange={setPreferencesOpen}
+        returnFocusTo={preferencesOpener}
+        preferences={editable.preferences}
+        onSave={editable.save}
       />
     </div>
   );

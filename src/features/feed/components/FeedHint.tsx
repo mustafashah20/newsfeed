@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 
 type FeedHintProps = {
-  /** The call to action, e.g. a link to /preferences. */
+  /** The call to action, e.g. a button that opens the preferences. */
   action: ReactNode;
   onDismiss: () => void;
 };
@@ -19,7 +19,7 @@ export function FeedHint({ action, onDismiss }: FeedHintProps) {
       <SparklesIcon aria-hidden="true" className="size-5 shrink-0 text-muted-foreground" />
       <p className="min-w-0 flex-1 text-sm">
         <span className="font-medium">Make this feed yours.</span> Pick your sources and categories,
-        and follow authors to see their articles first.
+        and add authors to see their articles first.
       </p>
       <div className="flex shrink-0 items-center gap-2">
         {action}

@@ -29,73 +29,71 @@ describe('personalized feed', () => {
     expect(section).toBe('science|sport');
   });
 
-  it('follows an author from a card and puts their articles first', async () => {
-    const { user } = renderApp('/');
-    // NYT science piece by Natalie Wolchover: fifth newest in the default fixtures.
-    const card = (
-      await screen.findByRole('link', { name: /Worlds More Habitable Than Earth/ })
-    ).closest('article')!;
-    expect(screen.getAllByRole('article')[0]).not.toBe(card);
+  it('puts preferred authors first, so their story leads', async () => {
+    usePreferences.setState({ authors: ['Natalie Wolchover'] });
+    renderApp('/');
 
-    await user.click(within(card).getByRole('button', { name: 'Follow Natalie Wolchover' }));
-
-    expect(
-      within(card).getByRole('button', { name: 'Following Natalie Wolchover' }),
-    ).toHaveAttribute('aria-pressed', 'true');
-    expect(usePreferences.getState().authors).toEqual(['Natalie Wolchover']);
-    await waitFor(() => {
-      expect(screen.getAllByRole('article')[0]).toHaveTextContent('Worlds More Habitable');
-    });
+    // NYT science piece: fifth newest in the default fixtures.
+    const link = await screen.findByRole('link', { name: /Worlds More Habitable Than Earth/ });
+    expect(screen.getAllByRole('article')[0]).toBe(link.closest('article'));
   });
 
-  it('follows each author of a multi-author byline', async () => {
-    const { user } = renderApp('/');
-
-    await user.click(
-      await screen.findByRole('button', { name: 'Follow Rachel Roubein, Daniel Wu' }),
-    );
-
-    expect(usePreferences.getState().authors).toEqual(['Rachel Roubein', 'Daniel Wu']);
-  });
-
-  it('filters to followed authors with the switch, kept in the URL', async () => {
+  it('adds a chip per preferred category that filters the loaded stories', async () => {
+    usePreferences.setState({ categories: ['science', 'sports'] });
     const { user, router } = renderApp('/');
-    const toggle = await screen.findByRole('switch', { name: 'Only followed authors' });
-    expect(toggle).toBeDisabled(); // nobody followed yet
+    const chips = await screen.findByRole('group', { name: 'Filter stories' });
+    expect(
+      within(chips)
+        .getAllByRole('button')
+        .map((b) => b.textContent),
+    ).toEqual(['All stories', 'Science', 'Sports']);
 
-    usePreferences.getState().addAuthor('Peter Bradshaw');
-    await waitFor(() => {
-      expect(toggle).toBeEnabled();
-    });
-    await user.click(toggle);
+    await screen.findByRole('link', { name: /Worlds More Habitable Than Earth/ });
+    await user.click(within(chips).getByRole('button', { name: 'Science' }));
 
+    expect(router.state.location.search).toEqual({ filter: 'science' });
     await waitFor(() => {
-      expect(screen.getAllByRole('article')).toHaveLength(1);
+      expect(screen.queryByRole('link', { name: REVIEW_TITLE })).toBeNull();
     });
-    expect(screen.getByRole('link', { name: REVIEW_TITLE })).toBeInTheDocument();
-    expect(router.state.location.search).toEqual({ following: true });
+    expect(
+      screen.getByRole('link', { name: /Worlds More Habitable Than Earth/ }),
+    ).toBeInTheDocument();
   });
 
-  it('explains an empty followed-only feed', async () => {
-    usePreferences.setState({ authors: ['Nobody Here'] });
-    renderApp('/?following=true');
+  it('explains an empty category chip', async () => {
+    // A shared link: the default feed has no Health stories in the fixtures.
+    renderApp('/?filter=health');
 
     expect(
-      await screen.findByRole('heading', { name: 'Nothing new from the authors you follow' }),
+      await screen.findByRole('heading', { name: 'No Health stories yet' }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Edit preferences' })).toHaveAttribute(
-      'href',
-      '/preferences',
+    const chips = screen.getByRole('group', { name: 'Filter stories' });
+    expect(within(chips).getByRole('button', { name: 'Health' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
     );
+    // Preferences already sits beside the chips; the empty state doesn't repeat it.
+    expect(screen.queryByRole('button', { name: 'Edit preferences' })).toBeNull();
+  });
+
+  it('treats an old ?filter=following link as All stories', async () => {
+    renderApp('/?filter=following');
+
+    const chips = await screen.findByRole('group', { name: 'Filter stories' });
+    expect(within(chips).getByRole('button', { name: 'All stories' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    expect(within(chips).queryByRole('button', { name: 'Following' })).toBeNull();
   });
 
   it('shows a first-visit hint that stays dismissed', async () => {
     const { user } = renderApp('/');
 
     const hint = await screen.findByRole('complementary', { name: 'Personalize your feed' });
-    expect(within(hint).getByRole('link', { name: 'Set preferences' })).toHaveAttribute(
-      'href',
-      '/preferences',
+    expect(within(hint).getByRole('button', { name: 'Set preferences' })).toHaveAttribute(
+      'aria-haspopup',
+      'dialog',
     );
     await user.click(within(hint).getByRole('button', { name: 'Dismiss' }));
 

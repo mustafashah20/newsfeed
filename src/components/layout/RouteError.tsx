@@ -2,7 +2,9 @@ import { useRouter } from '@tanstack/react-router';
 import type { ErrorComponentProps } from '@tanstack/react-router';
 
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
+import { PAGE_STACK_CLASS } from './page-styles';
 import { PageHeader } from './PageHeader';
 
 // Never show the raw error: it can contain API messages or proxied URLs.
@@ -15,7 +17,7 @@ export function RouteError({ reset }: ErrorComponentProps) {
   }
 
   return (
-    <div role="alert" className="flex flex-col items-start gap-6">
+    <div role="alert" className={cn(PAGE_STACK_CLASS, 'items-start')}>
       <PageHeader
         title="Something went wrong"
         description="This page couldn't be shown. Try again."

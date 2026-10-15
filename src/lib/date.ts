@@ -57,3 +57,8 @@ export function isWithinDays(iso: string, from?: string, to?: string) {
   if (to && isAfter(date, endOfDay(parseISO(to)))) return false;
   return true;
 }
+
+/** "Thursday 15 October": the feed's dateline. */
+export function formatDayHeading(now = new Date()) {
+  return format(now, 'EEEE d MMMM');
+}

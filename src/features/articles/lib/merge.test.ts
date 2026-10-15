@@ -81,9 +81,9 @@ describe('combineBatches', () => {
   });
 });
 
-describe('followed authors first', () => {
+describe('preferred authors first', () => {
   it('moves matching articles to the top of their batch, keeping newest-first within groups', () => {
-    const followed = (a: Article) => a.id.startsWith('f');
+    const preferred = (a: Article) => a.id.startsWith('f');
     const combined = combineBatches(
       [
         [
@@ -93,10 +93,10 @@ describe('followed authors first', () => {
         ],
         [article('n2', '2026-10-09T00:00:00.000Z'), article('f3', '2026-10-01T00:00:00.000Z')],
       ],
-      followed,
+      preferred,
     );
 
-    // Batch 2's followed article tops batch 2 only; batch 1 stays first.
+    // Batch 2's preferred article tops batch 2 only; batch 1 stays first.
     expect(combined.map((a) => a.id)).toEqual(['f2', 'f1', 'n1', 'f3', 'n2']);
   });
 });

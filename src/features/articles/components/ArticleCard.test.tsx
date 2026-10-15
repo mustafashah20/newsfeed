@@ -68,18 +68,16 @@ describe('ArticleCard', () => {
     expect(container.querySelector('img')).toBeNull();
   });
 
-  it('leaves out what the article doesn’t have and shows extra actions', () => {
+  it('leaves out what the article doesn’t have', () => {
     render(
       <ArticleCard
         article={{ ...article, description: null, author: null, category: null }}
         TitleLink={TestLink}
         now={NOW}
-        actions={<button type="button">Follow</button>}
       />,
     );
 
     expect(screen.queryByText(/^By /)).toBeNull();
     expect(screen.queryByText('Sports')).toBeNull();
-    expect(screen.getByRole('button', { name: 'Follow' })).toBeInTheDocument();
   });
 });

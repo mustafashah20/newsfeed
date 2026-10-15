@@ -24,7 +24,7 @@ export type ArticlePredicate = (article: Article) => boolean;
 
 /**
  * One batch (page n of every provider): dedupe by URL (first provider wins), newest first.
- * Articles matching `isPriority` (e.g. by a followed author) move to the top of the batch.
+ * Articles matching `isPriority` (e.g. by a preferred author) move to the top of the batch.
  */
 export function mergeBatch(articles: readonly Article[], isPriority?: ArticlePredicate): Article[] {
   const seen = new Set<string>();

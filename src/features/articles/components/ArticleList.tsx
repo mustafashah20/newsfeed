@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from 'react';
+import type { ComponentType } from 'react';
 
 import type { Article } from '@/services/news/types';
 
@@ -8,10 +8,9 @@ import type { TitleLinkProps } from './ArticleCard';
 type ArticleListProps = {
   articles: readonly Article[];
   TitleLink: ComponentType<TitleLinkProps>;
-  renderActions?: (article: Article) => ReactNode;
 };
 
-export function ArticleList({ articles, TitleLink, renderActions }: ArticleListProps) {
+export function ArticleList({ articles, TitleLink }: ArticleListProps) {
   return (
     // Columns follow the space the list gets (full page on the feed, beside the sidebar on
     // search). A container query reads the nearest ancestor container, hence the wrapper.
@@ -19,11 +18,7 @@ export function ArticleList({ articles, TitleLink, renderActions }: ArticleListP
       <ul className="grid grid-cols-1 gap-4 @xl:grid-cols-2 @3xl:grid-cols-3">
         {articles.map((article) => (
           <li key={article.id} className="min-w-0">
-            <ArticleCard
-              article={article}
-              TitleLink={TitleLink}
-              actions={renderActions?.(article)}
-            />
+            <ArticleCard article={article} TitleLink={TitleLink} />
           </li>
         ))}
       </ul>

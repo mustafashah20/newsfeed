@@ -23,7 +23,7 @@ describe('feed', () => {
     const guardianLink = await screen.findByRole('link', { name: GUARDIAN_TITLE });
     expect(screen.getByRole('link', { name: NYT_TITLE })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: NEWSAPI_TITLE })).toBeInTheDocument();
-    expect(screen.getByText('Showing 10 articles')).toBeInTheDocument();
+    expect(screen.getByText('Showing 10 stories')).toBeInTheDocument();
 
     const href = new URL(guardianLink.getAttribute('href') ?? '', 'http://x');
     expect(href.pathname).toBe('/article/guardian');
@@ -48,7 +48,7 @@ describe('feed', () => {
     });
   });
 
-  it('appends the next page on Load more without reshuffling', async () => {
+  it('appends the next page on Show more stories without reshuffling', async () => {
     const requestedPages: string[] = [];
     server.use(
       http.get('*/api/guardian/search', ({ request }) => {
@@ -77,7 +77,7 @@ describe('feed', () => {
 
     await screen.findByRole('link', { name: GUARDIAN_TITLE });
     const before = screen.getAllByRole('article').length;
-    await user.click(screen.getByRole('button', { name: 'Load more' }));
+    await user.click(screen.getByRole('button', { name: 'Show more stories' }));
 
     expect(
       await screen.findByRole('link', { name: 'An older Guardian story' }),

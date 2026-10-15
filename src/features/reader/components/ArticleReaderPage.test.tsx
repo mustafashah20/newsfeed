@@ -179,15 +179,4 @@ describe('article reader', () => {
       await screen.findByRole('heading', { name: 'This article isn’t available' }),
     ).toBeInTheDocument();
   });
-
-  it('follows the author from the reader', async () => {
-    const { user } = renderApp(readerUrl('guardian', GUARDIAN.id));
-
-    await user.click(await screen.findByRole('button', { name: 'Follow Peter Bradshaw' }));
-
-    expect(screen.getByRole('button', { name: 'Following Peter Bradshaw' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
-  });
 });

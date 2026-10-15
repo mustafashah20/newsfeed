@@ -22,7 +22,7 @@ export function PreferencesForm(props: PreferencesFormProps) {
     props.sources.includes('newsapi') && props.categories.length > NEWSAPI_MAX_CATEGORIES;
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
+    <div className="flex flex-col gap-6">
       <PreferencesSection title="Sources" description="Where your feed’s articles come from.">
         <SourceToggles value={props.sources} onToggle={props.onToggleSource} />
       </PreferencesSection>
@@ -39,18 +39,16 @@ export function PreferencesForm(props: PreferencesFormProps) {
         )}
       </PreferencesSection>
 
-      <div className="lg:col-span-2">
-        <PreferencesSection
-          title="Authors"
-          description="Articles by authors you follow are marked and shown first in your feed."
-        >
-          <AuthorInput
-            authors={props.authors}
-            onAdd={props.onAddAuthor}
-            onRemove={props.onRemoveAuthor}
-          />
-        </PreferencesSection>
-      </div>
+      <PreferencesSection
+        title="Authors"
+        description="Articles by these authors are shown first in your feed."
+      >
+        <AuthorInput
+          authors={props.authors}
+          onAdd={props.onAddAuthor}
+          onRemove={props.onRemoveAuthor}
+        />
+      </PreferencesSection>
     </div>
   );
 }

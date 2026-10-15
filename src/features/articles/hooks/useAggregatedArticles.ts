@@ -1,7 +1,7 @@
 import { useQueries, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { isByFollowedAuthor } from '@/lib/authors';
+import { isByPreferredAuthor } from '@/lib/authors';
 import { articleKeys, normalizeQuery } from '@/services/news/query-keys';
 import { providers } from '@/services/news/registry';
 import type { Article, ProviderId, ProviderPage, ProviderQuery } from '@/services/news/types';
@@ -16,7 +16,7 @@ export type SourceState = { provider: ProviderId; label: string } & SourceStatus
 type AggregatedArticlesOptions = {
   query: ProviderQuery;
   providers: readonly ProviderId[];
-  /** Followed authors: their articles move to the top of each batch. */
+  /** Preferred authors: their articles move to the top of each batch. */
   authors?: readonly string[];
 };
 
@@ -74,7 +74,7 @@ export function useAggregatedArticles({
   for (const { page, result } of entries) {
     if (result?.data) batches[page - 1]?.push(...result.data.articles);
   }
-  const articles = combineBatches(batches, (a) => isByFollowedAuthor(a.author, authors));
+  const articles = combineBatches(batches, (a) => isByPreferredAuthor(a.author, authors));
 
   const sources: SourceState[] = selected.map((provider) => {
     const own = entries.filter((e) => e.provider === provider);

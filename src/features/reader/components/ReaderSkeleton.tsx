@@ -1,4 +1,8 @@
+import { PAGE_STACK_CLASS } from '@/components/layout/page-styles';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
+
+import { READER_GRID, READER_MAIN, READER_SIDE } from '../layout';
 
 type ReaderSkeletonProps = {
   /** Only the body lines, under an already-shown header (full text loading). */
@@ -15,7 +19,7 @@ const bodyLines = (
   </div>
 );
 
-// Mirrors the reader layout so nothing jumps when the article arrives.
+// Mirrors the reader layout (same grid and spacing) so nothing jumps when the article arrives.
 export function ReaderSkeleton({ bodyOnly = false }: ReaderSkeletonProps) {
   if (bodyOnly) {
     return (
@@ -27,13 +31,20 @@ export function ReaderSkeleton({ bodyOnly = false }: ReaderSkeletonProps) {
   }
 
   return (
-    <div role="status" aria-busy="true" className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+    <div role="status" aria-busy="true" className={PAGE_STACK_CLASS}>
       <span className="sr-only">Loading article…</span>
-      <Skeleton className="aspect-video w-full rounded-xl" />
-      <Skeleton className="h-9 w-full" />
-      <Skeleton className="h-9 w-3/4" />
-      <Skeleton className="h-4 w-1/2" />
-      {bodyLines}
+      <Skeleton className="h-11 w-24" />
+      <div className={cn(READER_GRID, 'lg:items-center')}>
+        <Skeleton className={cn(READER_MAIN, 'aspect-16/10 w-full rounded-md')} />
+        <div className={cn(READER_SIDE, 'flex flex-col gap-3')}>
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-3/4" />
+          <Skeleton className="h-4 w-1/2" />
+        </div>
+      </div>
+      <div className={READER_GRID}>
+        <div className={READER_MAIN}>{bodyLines}</div>
+      </div>
     </div>
   );
 }

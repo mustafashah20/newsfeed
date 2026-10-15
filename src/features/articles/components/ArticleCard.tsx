@@ -18,12 +18,10 @@ type ArticleCardProps = {
   article: Article;
   /** Renders the title as the link that opens the article (stretched over the whole card). */
   TitleLink: ComponentType<TitleLinkProps>;
-  /** Controls that sit above the stretched link, e.g. Follow author. */
-  actions?: ReactNode;
   now?: Date;
 };
 
-export function ArticleCard({ article, TitleLink, actions, now }: ArticleCardProps) {
+export function ArticleCard({ article, TitleLink, now }: ArticleCardProps) {
   return (
     <article className="h-full">
       {/* The whole card shows focus, since the stretched title link covers it. */}
@@ -52,15 +50,10 @@ export function ArticleCard({ article, TitleLink, actions, now }: ArticleCardPro
           {article.description && (
             <p className="line-clamp-3 break-words text-muted-foreground">{article.description}</p>
           )}
-          {(article.author || actions) && (
-            <div className="mt-auto flex min-w-0 items-center justify-between gap-2">
-              {article.author && (
-                <p className="min-w-0 truncate text-xs text-muted-foreground">
-                  By {article.author}
-                </p>
-              )}
-              {actions && <div className="relative z-10 ml-auto shrink-0">{actions}</div>}
-            </div>
+          {article.author && (
+            <p className="mt-auto min-w-0 truncate text-xs text-muted-foreground">
+              By {article.author}
+            </p>
           )}
         </CardContent>
       </Card>

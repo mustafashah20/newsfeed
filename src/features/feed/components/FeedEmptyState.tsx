@@ -1,41 +1,34 @@
 import type { ReactNode } from 'react';
 
 import { EmptyState } from '@/features/articles';
+import { categoryLabel } from '@/services/news/categories';
+
+import type { FeedFilter } from '../feed-params';
 
 type FeedEmptyStateProps = {
-  onlyFollowed: boolean;
-  followsAnyone: boolean;
-  /** E.g. an "Edit preferences" link. */
-  action: ReactNode;
+  filter: FeedFilter | undefined;
+  /** E.g. "All stories". Preferences is already beside the chips, so not repeated here. */
+  children?: ReactNode;
 };
 
-export function FeedEmptyState({ onlyFollowed, followsAnyone, action }: FeedEmptyStateProps) {
-  if (!onlyFollowed) {
+export function FeedEmptyState({ filter, children }: FeedEmptyStateProps) {
+  if (!filter) {
     return (
       <EmptyState
         title="No articles for your preferences"
         description="Try more sources or fewer categories."
       >
-        {action}
+        {children}
       </EmptyState>
     );
   }
-  if (!followsAnyone) {
-    return (
-      <EmptyState
-        title="You don’t follow anyone yet"
-        description="Follow authors from any article, or add them in your preferences."
-      >
-        {action}
-      </EmptyState>
-    );
-  }
+  const label = categoryLabel(filter);
   return (
     <EmptyState
-      title="Nothing new from the authors you follow"
-      description="Turn off “Only followed authors” to see everything, or follow more authors."
+      title={`No ${label} stories yet`}
+      description={`None of the stories loaded so far are in ${label}.`}
     >
-      {action}
+      {children}
     </EmptyState>
   );
 }

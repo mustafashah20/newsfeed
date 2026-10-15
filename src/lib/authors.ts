@@ -14,9 +14,9 @@ export function authorKey(name: string) {
   return name.replace(/\s+/g, ' ').trim().toLowerCase();
 }
 
-/** Whether any author in the byline is one of `followed`. */
-export function isByFollowedAuthor(byline: string | null, followed: readonly string[]) {
-  if (!byline || followed.length === 0) return false;
-  const keys = new Set(followed.map(authorKey));
+/** Whether any author in the byline is one of `preferred`. */
+export function isByPreferredAuthor(byline: string | null, preferred: readonly string[]) {
+  if (!byline || preferred.length === 0) return false;
+  const keys = new Set(preferred.map(authorKey));
   return splitAuthors(byline).some((name) => keys.has(authorKey(name)));
 }

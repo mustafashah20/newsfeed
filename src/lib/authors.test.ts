@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { authorKey, isByFollowedAuthor, splitAuthors } from './authors';
+import { authorKey, isByPreferredAuthor, splitAuthors } from './authors';
 
 describe('author helpers', () => {
   it('splits multi-author bylines into normalized names', () => {
@@ -15,10 +15,10 @@ describe('author helpers', () => {
     expect(authorKey('  Jane   DOE ')).toBe(authorKey('jane doe'));
   });
 
-  it('matches when any author in the byline is followed', () => {
-    expect(isByFollowedAuthor('Rachel Roubein, Daniel Wu', ['daniel wu'])).toBe(true);
-    expect(isByFollowedAuthor('Peter Bradshaw', ['Peter'])).toBe(false);
-    expect(isByFollowedAuthor(null, ['Peter Bradshaw'])).toBe(false);
-    expect(isByFollowedAuthor('Peter Bradshaw', [])).toBe(false);
+  it('matches when any author in the byline is preferred', () => {
+    expect(isByPreferredAuthor('Rachel Roubein, Daniel Wu', ['daniel wu'])).toBe(true);
+    expect(isByPreferredAuthor('Peter Bradshaw', ['Peter'])).toBe(false);
+    expect(isByPreferredAuthor(null, ['Peter Bradshaw'])).toBe(false);
+    expect(isByPreferredAuthor('Peter Bradshaw', [])).toBe(false);
   });
 });

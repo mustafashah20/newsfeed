@@ -1,6 +1,5 @@
+import { useId } from 'react';
 import type { ReactNode } from 'react';
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 type PreferencesSectionProps = {
   title: string;
@@ -9,15 +8,20 @@ type PreferencesSectionProps = {
 };
 
 export function PreferencesSection({ title, description, children }: PreferencesSectionProps) {
+  const id = useId();
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          <h2 className="font-heading text-lg font-semibold">{title}</h2>
-        </CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent>{children}</CardContent>
-    </Card>
+    <section
+      aria-labelledby={id}
+      className="flex flex-col gap-3 border-t pt-6 first:border-t-0 first:pt-0"
+    >
+      <div>
+        <h3 id={id} className="text-sm font-medium">
+          {title}
+        </h3>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+      {children}
+    </section>
   );
 }

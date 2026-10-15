@@ -46,6 +46,22 @@ describe('preferences store', () => {
     expect(state().authors).toEqual([]);
   });
 
+  it('saves an edited set in canonical order and never with no sources', () => {
+    state().save({
+      sources: ['nyt', 'newsapi'],
+      categories: ['technology', 'business'],
+      authors: ['Bo Kim'],
+    });
+    expect(state()).toMatchObject({
+      sources: ['newsapi', 'nyt'],
+      categories: ['business', 'technology'],
+      authors: ['Bo Kim'],
+    });
+
+    state().save({ sources: [], categories: [], authors: [] });
+    expect(state().sources).toEqual(['newsapi', 'nyt']);
+  });
+
   it('resets to defaults but keeps the hint dismissed', () => {
     state().toggleSource('nyt');
     state().setCategories(['science']);

@@ -1,12 +1,14 @@
 import { getRouteApi, Link, useCanGoBack, useRouter } from '@tanstack/react-router';
 import { ArrowLeftIcon } from 'lucide-react';
 
+import { PAGE_STACK_CLASS } from '@/components/layout/page-styles';
 import { Button } from '@/components/ui/button';
 import { describeSourceError } from '@/features/articles';
-import { FollowAuthorButton, useFollowedAuthors } from '@/features/preferences';
+import { cn } from '@/lib/utils';
 import { providers } from '@/services/news/registry';
 
 import { useArticle } from '../hooks/useArticle';
+import { READER_GRID, READER_MAIN } from '../layout';
 import { ArticleBody } from './ArticleBody';
 import { PreviewNotice } from './PreviewNotice';
 import { ReaderAttribution } from './ReaderAttribution';
@@ -21,16 +23,16 @@ export function ArticleReaderPage() {
   const { provider } = route.useParams();
   const { id } = route.useSearch();
   const state = useArticle(provider, id);
-  const follow = useFollowedAuthors();
   const router = useRouter();
   const canGoBack = useCanGoBack();
   const providerLabel = providers[provider].label;
 
   // Back keeps the list's scroll position (router scroll restoration); a fresh tab goes home.
+  // -ml-3 lines the arrow up with the page edge instead of the button's padding.
   const back = canGoBack ? (
     <Button
       variant="ghost"
-      className="h-11 self-start px-3"
+      className="-ml-3 h-11 self-start px-3"
       onClick={() => {
         router.history.back();
       }}
@@ -39,7 +41,7 @@ export function ArticleReaderPage() {
       Back
     </Button>
   ) : (
-    <Button asChild variant="ghost" className="h-11 self-start px-3">
+    <Button asChild variant="ghost" className="-ml-3 h-11 self-start px-3">
       <Link to="/">
         <ArrowLeftIcon aria-hidden="true" />
         Your feed
@@ -65,33 +67,31 @@ export function ArticleReaderPage() {
   }
 
   const { article, isLoadingFullText, fullTextError } = state;
-  const { author } = article;
-  const followButton = author ? (
-    <FollowAuthorButton
-      author={author}
-      isFollowing={follow.isFollowing(author)}
-      onToggle={() => {
-        follow.toggle(author);
-      }}
-    />
-  ) : null;
 
   return (
-    <article className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+    // Same page width and edges as the feed and search (AppShell's container); the body keeps
+    // to the main column so lines stay a readable length.
+    <article className={PAGE_STACK_CLASS}>
       {back}
-      <ReaderHeader article={article} actions={followButton} />
-      <ArticleBody blocks={article.blocks} />
-      {isLoadingFullText && <ReaderSkeleton bodyOnly />}
-      {Boolean(fullTextError) && (
-        <div role="alert" className="flex flex-wrap items-center gap-2 text-sm">
-          <span>{describeSourceError(fullTextError, providerLabel).message}.</span>
-          <Button variant="outline" className="h-11 px-4" onClick={state.retry}>
-            Retry
-          </Button>
+      <ReaderHeader article={article} />
+      <div className={READER_GRID}>
+        <div className={cn(READER_MAIN, 'flex min-w-0 flex-col gap-6')}>
+          <ArticleBody blocks={article.blocks} />
+          {isLoadingFullText && <ReaderSkeleton bodyOnly />}
+          {Boolean(fullTextError) && (
+            <div role="alert" className="flex flex-wrap items-center gap-2 text-sm">
+              <span>{describeSourceError(fullTextError, providerLabel).message}.</span>
+              <Button variant="outline" className="h-11 px-4" onClick={state.retry}>
+                Retry
+              </Button>
+            </div>
+          )}
+          {!article.isFullText && !isLoadingFullText && (
+            <PreviewNotice providerLabel={providerLabel} />
+          )}
+          <ReaderAttribution sourceName={article.sourceName} url={article.url} />
         </div>
-      )}
-      {!article.isFullText && !isLoadingFullText && <PreviewNotice providerLabel={providerLabel} />}
-      <ReaderAttribution sourceName={article.sourceName} url={article.url} />
+      </div>
     </article>
   );
 }

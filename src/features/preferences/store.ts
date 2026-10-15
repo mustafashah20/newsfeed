@@ -9,6 +9,8 @@ import type { Category } from '@/services/news/categories';
 import { PROVIDER_IDS } from '@/services/news/types';
 import type { ProviderId } from '@/services/news/types';
 
+import { addAuthor, inOrder, orderCategories, removeAuthor, toggleSource } from './lib/edit';
+
 export type Preferences = {
   sources: ProviderId[]; // default: all three; never empty
   categories: Category[]; // default: [] = all
@@ -19,13 +21,18 @@ export type Preferences = {
 type PreferencesActions = {
   toggleSource: (source: ProviderId) => void;
   setCategories: (categories: readonly Category[]) => void;
-  /** Returns false when the name is empty or already followed. */
+  /** Returns false when the name is empty or already in the list. */
   addAuthor: (name: string) => boolean;
   removeAuthor: (name: string) => void;
+  /** Replaces sources, categories and authors at once (the preferences dialog's Save). */
+  save: (edited: EditablePreferences) => void;
   dismissFeedHint: () => void;
   /** Back to defaults (keeps the hint dismissed: resetting isn't a first visit). */
   reset: () => void;
 };
+
+/** What the preferences dialog edits. */
+export type EditablePreferences = Pick<Preferences, 'sources' | 'categories' | 'authors'>;
 
 export type PreferencesState = Preferences & PreferencesActions;
 
@@ -36,9 +43,11 @@ const DEFAULTS: Preferences = {
   feedHintDismissed: false,
 };
 
-// Registry/table order, so equal selections always look (and cache) the same.
-const inOrder = <T extends string>(all: readonly T[], selected: readonly T[]) =>
-  all.filter((item) => selected.includes(item));
+export const DEFAULT_EDITABLE: EditablePreferences = {
+  sources: DEFAULTS.sources,
+  categories: DEFAULTS.categories,
+  authors: DEFAULTS.authors,
+};
 
 // localStorage is external data: validate it. Each field falls back on its own.
 const persistedSchema = z.object({
@@ -63,32 +72,32 @@ export const usePreferences = create<PreferencesState>()(
       ...DEFAULTS,
 
       toggleSource: (source) => {
-        const { sources } = get();
-        if (!sources.includes(source)) {
-          set({ sources: inOrder(PROVIDER_IDS, [...sources, source]) });
-          return;
-        }
-        // At least one source must stay selected.
-        if (sources.length === 1) return;
-        set({ sources: sources.filter((s) => s !== source) });
+        set({ sources: toggleSource(get().sources, source) });
       },
 
       setCategories: (categories) => {
-        set({ categories: inOrder(CATEGORIES, categories) });
+        set({ categories: orderCategories(categories) });
       },
 
       addAuthor: (name) => {
-        const author = normalizeAuthor(name);
-        if (!author) return false;
-        const { authors } = get();
-        if (authors.some((a) => authorKey(a) === authorKey(author))) return false;
-        set({ authors: [...authors, author] });
+        const authors = addAuthor(get().authors, name);
+        if (!authors) return false;
+        set({ authors });
         return true;
       },
 
       removeAuthor: (name) => {
-        const key = authorKey(name);
-        set({ authors: get().authors.filter((a) => authorKey(a) !== key) });
+        set({ authors: removeAuthor(get().authors, name) });
+      },
+
+      save: ({ sources, categories, authors }) => {
+        // At least one source must stay selected.
+        if (sources.length === 0) return;
+        set({
+          sources: inOrder(PROVIDER_IDS, sources),
+          categories: orderCategories(categories),
+          authors: [...authors],
+        });
       },
 
       dismissFeedHint: () => {

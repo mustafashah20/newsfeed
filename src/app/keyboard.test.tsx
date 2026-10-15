@@ -18,17 +18,9 @@ describe('keyboard', () => {
     expect(screen.getByRole('main')).toHaveAttribute('tabindex', '-1'); // focusable target
   });
 
-  it('opens an article from its card with Enter, and follows its author with Space', async () => {
+  it('opens an article from its card with Enter', async () => {
     const { user } = renderApp('/');
     const title = await screen.findByRole('link', { name: /Frank and Percy review/ });
-    const card = title.closest('article')!;
-
-    // Tab order within a card: the title link, then the Follow button.
-    title.focus();
-    await user.tab();
-    expect(within(card).getByRole('button', { name: 'Follow Peter Bradshaw' })).toHaveFocus();
-    await user.keyboard(' ');
-    expect(within(card).getByRole('button', { name: 'Following Peter Bradshaw' })).toHaveFocus();
 
     title.focus();
     await user.keyboard('{Enter}');
@@ -37,22 +29,25 @@ describe('keyboard', () => {
     ).toBeInTheDocument();
   });
 
-  it('opens the mobile menu, keeps focus inside, and restores it on Escape', async () => {
-    const { user } = renderApp('/');
-    const trigger = await screen.findByRole('button', { name: 'Open menu' });
+  it('opens Preferences and the Search tab with Enter', async () => {
+    const { user, router } = renderApp('/');
 
-    trigger.focus();
+    const preferences = await screen.findByRole('button', { name: 'Preferences' });
+    preferences.focus();
     await user.keyboard('{Enter}');
-    const menu = await screen.findByRole('dialog', { name: 'Menu' });
-    await waitFor(() => {
-      expect(menu).toContainElement(document.activeElement as HTMLElement);
-    });
-
+    expect(await screen.findByRole('dialog', { name: 'Preferences' })).toBeInTheDocument();
+    // Escape closes the popup and hands focus back to the button that opened it.
     await user.keyboard('{Escape}');
     await waitFor(() => {
-      expect(screen.queryByRole('dialog', { name: 'Menu' })).toBeNull();
+      expect(preferences).toHaveFocus();
     });
-    expect(trigger).toHaveFocus();
+
+    const tabs = screen.getByRole('navigation', { name: 'Tabs' });
+    within(tabs).getByRole('link', { name: 'Search' }).focus();
+    await user.keyboard('{Enter}');
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe('/search');
+    });
   });
 
   it('submits a search from the header with Enter', async () => {
