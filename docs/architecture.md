@@ -135,16 +135,19 @@ export const searchParamsSchema = z.object({
   q: z.string().trim().catch(''),
   from: z.iso.date().optional().catch(undefined),
   to: z.iso.date().optional().catch(undefined),
-  category: z.enum(CATEGORIES).optional().catch(undefined),
+  categories: z.array(z.unknown())                       // unknown entries dropped one by one
+    .transform((v) => CATEGORIES.filter((c) => v.includes(c))).optional().catch(undefined),
+  category: z.enum(CATEGORIES).optional().catch(undefined), // read only: pre-multi-select links
   sources: z.array(z.enum(PROVIDER_IDS)).min(1).optional().catch(undefined),
 });
 ```
 
+- **Categories are multi-select** (none = all), like the feed's preferred categories: `ProviderQuery.categories` already takes a list. Guardian joins them in one `section=a|b`, NYT in one `section.name:("A" "B")`, and NewsAPI makes one request per category, capped at `NEWSAPI_MAX_CATEGORIES` (3); `isNewsapiCategoryCapped(filters)` drives the "NewsAPI uses your first 3 categories" note. An old `?category=science` link is folded into `categories` and rewritten on the next change.
 - Every field falls back instead of failing. `sources` is optional (missing or empty = all sources), so `<Link to="/search">` needs no params and defaults never appear in the URL; shared links stay short (`/search?q=climate`).
 - `toSearchFilters(params)` applies defaults (all sources, in registry order; a reversed range is swapped) and `toSearchParams(filters)` drops them again. `toProviderQuery(filters)` feeds `useAggregatedArticles`.
 - `routes/search.tsx` uses `validateSearch: searchParamsSchema`. `useSearchFilters()` (`features/search/hooks`) reads with `getRouteApi('/search').useSearch()` and writes with `navigate({ search: toSearchParams({ ...filters, ...patch }) })`; filters never live in React state.
 - Date presets (Any time, Past 24 h, Past week, Past month) become a `from` day (`lib/date-presets.ts`; the APIs filter by whole days, so "Past 24 h" starts yesterday). A custom range is picked in a Calendar popover and applied with an Apply button (one URL change, one fetch). A URL range that matches a preset today shows as that preset.
-- Filter changes apply immediately (each is a deliberate click; already-fetched combinations come from the cache). The keyword still runs on submit only.
+- Single-choice filters apply in one click (a date quick range, removing a chip). Multi-select filters (categories, sources) are a draft until **Apply**, in both the desktop panels and the phone Filters popup: ticking several options must not run a search per tick, since each search hits every source and NYT allows 5 requests a minute. Apply with an unchanged selection runs nothing; already-fetched combinations come from the cache. The keyword still runs on submit only.
 
 ## Article reader (`features/reader/`, route `/article/$provider?id=<externalId>`)
 

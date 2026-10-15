@@ -16,12 +16,12 @@ export function useSearchFilters() {
     void navigate({ search: toSearchParams({ ...filters, ...patch }) });
   }
 
-  /** Resets date, category and sources; keeps the keyword. */
+  /** Resets date, categories and sources; keeps the keyword. */
   function clearFilters() {
     updateFilters({
       from: undefined,
       to: undefined,
-      category: undefined,
+      categories: [],
       sources: [...PROVIDER_IDS],
     });
   }

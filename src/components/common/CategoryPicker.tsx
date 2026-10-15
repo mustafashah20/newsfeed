@@ -9,12 +9,14 @@ type CategoryPickerProps = {
   onChange: (categories: Category[]) => void;
 };
 
-/** None checked = all categories. */
+/** Category checkboxes (Preferences and the search Filters popup). None checked = all categories. */
 export function CategoryPicker({ value, onChange }: CategoryPickerProps) {
   const id = useId();
 
   function handleToggle(category: Category, checked: boolean) {
-    onChange(checked ? [...value, category] : value.filter((c) => c !== category));
+    const next = checked ? [...value, category] : value.filter((c) => c !== category);
+    // Table order, so equal selections always look (and cache) the same.
+    onChange(CATEGORIES.filter((c) => next.includes(c)));
   }
 
   return (

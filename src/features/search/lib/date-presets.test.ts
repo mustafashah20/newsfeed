@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { describeRange, detectPreset, presetRange } from './date-presets';
+import {
+  describeRange,
+  detectPreset,
+  fromPickerRange,
+  presetRange,
+  toPickerRange,
+} from './date-presets';
 
 const NOW = new Date(2026, 9, 14, 15); // 14 Oct 2026, local
 
@@ -27,5 +33,18 @@ describe('date presets', () => {
     );
     expect(describeRange({ from: '2026-10-02' }, NOW)).toBe('From 2 Oct 2026');
     expect(describeRange({ to: '2026-10-02' }, NOW)).toBe('Until 2 Oct 2026');
+  });
+
+  it('converts between day ranges and calendar selections', () => {
+    expect(toPickerRange({})).toBeUndefined();
+    const picked = toPickerRange({ from: '2026-10-01', to: '2026-10-05' });
+    expect(fromPickerRange(picked)).toEqual({ from: '2026-10-01', to: '2026-10-05' });
+
+    // One picked day is a one-day range; nothing picked is no range.
+    expect(fromPickerRange({ from: new Date(2026, 9, 3), to: undefined })).toEqual({
+      from: '2026-10-03',
+      to: '2026-10-03',
+    });
+    expect(fromPickerRange(undefined)).toBeNull();
   });
 });

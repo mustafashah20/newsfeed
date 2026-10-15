@@ -69,18 +69,27 @@ describe('keyboard', () => {
 
   it('picks a category filter with the keyboard', async () => {
     const { user, router } = renderApp('/search?q=climate');
-    const filters = await screen.findByRole('complementary', { name: 'Filters' });
-    const category = within(filters).getByRole('combobox', { name: 'Category' });
+    const trigger = await screen.findByRole('button', { name: /^Filters/ });
 
-    category.focus();
+    trigger.focus();
     await user.keyboard('{Enter}');
-    await screen.findByRole('listbox');
-    // Opens on the current item (All categories): two down is General → Business.
-    await user.keyboard('{ArrowDown}{ArrowDown}{Enter}');
+    const dialog = await screen.findByRole('dialog', { name: 'Filters' });
+    // Categories are checkboxes: Space ticks the focused one.
+    const business = within(dialog).getByRole('checkbox', { name: 'Business' });
+    business.focus();
+    await user.keyboard(' ');
+    expect(business).toBeChecked();
+    expect(business).toHaveFocus();
+
+    within(dialog).getByRole('button', { name: 'Show results' }).focus();
+    await user.keyboard('{Enter}');
 
     await waitFor(() => {
-      expect(router.state.location.search).toMatchObject({ category: 'business' });
+      expect(router.state.location.search).toMatchObject({ categories: ['business'] });
     });
-    expect(category).toHaveFocus();
+    // Focus goes back to the button that opened the popup.
+    await waitFor(() => {
+      expect(trigger).toHaveFocus();
+    });
   });
 });

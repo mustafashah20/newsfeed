@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { PAGE_DESCRIPTION_CLASS, PAGE_TITLE_CLASS } from './page-styles';
+
 type PageHeaderProps = {
   title: string;
   description?: string;
@@ -11,10 +13,8 @@ export function PageHeader({ title, description, children }: PageHeaderProps) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div className="min-w-0">
-        <h1 className="font-heading text-2xl font-semibold tracking-tight break-words sm:text-3xl">
-          {title}
-        </h1>
-        {description && <p className="mt-1 text-muted-foreground">{description}</p>}
+        <h1 className={PAGE_TITLE_CLASS}>{title}</h1>
+        {description && <p className={PAGE_DESCRIPTION_CLASS}>{description}</p>}
       </div>
       {children && <div className="flex shrink-0 flex-wrap gap-2">{children}</div>}
     </div>

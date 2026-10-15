@@ -1,9 +1,13 @@
 import { useId } from 'react';
 
-import { NEWSAPI_WINDOW_DAYS } from '@/services/news/providers/newsapi/client';
+import { CategoryPicker } from '@/components/common/CategoryPicker';
+import {
+  NEWSAPI_MAX_CATEGORIES,
+  NEWSAPI_WINDOW_DAYS,
+} from '@/services/news/providers/newsapi/client';
 
+import { isNewsapiCategoryCapped } from '../search-params';
 import type { SearchFilters } from '../search-params';
-import { CategorySelect } from './CategorySelect';
 import { DateRangeFilter } from './DateRangeFilter';
 import { SourceMultiSelect } from './SourceMultiSelect';
 
@@ -16,7 +20,7 @@ type FiltersPanelProps = {
 export function FiltersPanel({ filters, onChange }: FiltersPanelProps) {
   const id = useId();
   const dateId = `${id}-date`;
-  const categoryId = `${id}-category`;
+  const newsapiCapped = isNewsapiCategoryCapped(filters);
 
   return (
     <div className="flex flex-col gap-6">
@@ -39,18 +43,23 @@ export function FiltersPanel({ filters, onChange }: FiltersPanelProps) {
         )}
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label htmlFor={categoryId} className="text-sm font-medium">
-          Category
-        </label>
-        <CategorySelect
-          id={categoryId}
-          value={filters.category}
-          onChange={(category) => {
-            onChange({ category });
+      <fieldset className="flex flex-col">
+        <legend className="mb-1 text-sm font-medium">Categories</legend>
+        <p className="mb-1 text-xs text-muted-foreground">
+          Leave all unchecked for every category.
+        </p>
+        <CategoryPicker
+          value={filters.categories}
+          onChange={(categories) => {
+            onChange({ categories });
           }}
         />
-      </div>
+        {newsapiCapped && (
+          <p className="mt-1 text-xs text-muted-foreground">
+            NewsAPI uses your first {NEWSAPI_MAX_CATEGORIES} categories.
+          </p>
+        )}
+      </fieldset>
 
       <SourceMultiSelect
         idPrefix={`${id}-source`}

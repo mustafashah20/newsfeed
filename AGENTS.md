@@ -71,18 +71,21 @@ src/
 ├── features/       each has index.ts = its public API
 │   ├── articles/   components/ (ArticleCard, ArticleList, skeleton, EmptyState,
 │   │               SourceStatusBar, LoadMoreButton), hooks/useAggregatedArticles.ts, lib/merge.ts
-│   ├── search/     components/ (SearchBar, FiltersPanel, DateRangeFilter, CategorySelect,
-│   │               SourceMultiSelect, ActiveFilterChips), search-params.ts
+│   ├── search/     components/ (SearchBar, FiltersDialog, FiltersPanel, DateRangeFilter,
+│   │               SourceMultiSelect, ActiveFilterChips, FiltersBar,
+│   │               DateFilterPopover, FilterPopover, CategoryFilter, SourcesFilter,
+│   │               FilterCheckboxRow, RadioIndicator),
+│   │               lib/filter-styles.ts, search-params.ts
 │   ├── feed/       components/FeedPage.tsx, hooks/useFeedParams.ts
 │   ├── reader/     components/ (ArticleReaderPage, ReaderHeader, ArticleBody, PreviewNotice,
 │   │               ReaderUnavailable), hooks/useArticle.ts
-│   └── preferences/ store.ts, components/ (PreferencesForm, SourceToggles, CategoryPicker,
+│   └── preferences/ store.ts, components/ (PreferencesForm, SourceToggles,
 │                   AuthorInput, FollowAuthorButton)
 ├── services/news/  types.ts, categories.ts, http.ts, registry.ts, query-keys.ts, preview.ts,
 │                   providers/{newsapi,guardian,nyt}/ (client, schema, mapper, index + tests;
 │                   guardian also has body-parser.ts)
 ├── components/     ui/ (shadcn, generated) · layout/ (AppShell, Header, MobileNav, PageHeader)
-│                   · common/ (shared by 2+ features; starts empty)
+│                   · common/ (shared by 2+ features: CategoryPicker)
 ├── hooks/          generic hooks (useMediaQuery, useDebouncedValue)
 ├── lib/            utils.ts (cn), date.ts, text.ts
 └── test/           setup.ts, msw/handlers.ts, fixtures/, render.tsx
@@ -118,10 +121,10 @@ Anything else: ask before creating a new top-level folder.
 
 ## UI and responsive design
 
-- Use shadcn primitives (Button, Input, Card, Badge, Select, Checkbox, Switch, Popover, Calendar, Sheet, Skeleton, Separator, Sonner); don't rebuild them. Colors only through shadcn CSS variables. `cn()` for classes; no inline `style`.
-- **Layout:** sticky header (logo, search → `/search?q=`, nav Feed/Search/Preferences; Sheet below `md`). Filters in a sidebar at `lg`+, a Sheet below, with removable active-filter chips. Card grid 1 → 2 → 3 columns by the list's own width (container queries `@xl`/`@3xl`, so it fits both the full-width feed and the space beside the search sidebar). Card: lazy `aspect-video` image with fallback, source badge, category, relative time, title (2-line clamp), description (3-line clamp), author.
+- Use shadcn primitives (Button, Input, Card, Badge, Select, Checkbox, Switch, Popover, Calendar, Dialog, Sheet, Skeleton, Separator, Sonner); don't rebuild them. Colors only through shadcn CSS variables. `cn()` for classes; no inline `style`.
+- **Layout:** sticky header (logo, search → `/search?q=`, nav Feed/Search/Preferences; Sheet below `md`). Search, below `md`: a Filters button opens a popup (`FiltersDialog`) with Date, Categories (checkboxes, any number; the shared `components/common/CategoryPicker`) and Sources; edits are a draft until "Show results" (closing discards them, so trying filters costs no requests), and applied filters show as removable chips under the button. From `md`: the same filters are pill buttons (`FiltersBar`) in a wrapping row 16px under the search bar; a set pill turns dark and shows its value (no chips). Date opens "Published" quick ranges (radio rows, one click applies) beside a two-month calendar (`DateFilterPopover`; a calendar range applies on "Apply"). Category and Sources open a checkbox panel (`CategoryFilter`, `SourcesFilter` on the shared `FilterPopover`) whose ticks are a draft: **Apply** runs one search (none if nothing changed), closing discards, Clear resets the draft. Never apply a multi-select filter per tick: every search hits every source and NYT allows 5 requests a minute. Category is multi-select ("Science +2"; notes when NewsAPI only uses the first 3); the last source can't be unticked. "Clear filters" shows when any filter is active. Pill and menu classes live in `features/search/lib/filter-styles.ts`. The search bar is one rounded field (icon, input, clear ×, Search button inside); the field border uses the `--field` token. Search results use the full width. Card grid 1 → 2 → 3 columns by the list's own width (container queries `@xl`/`@3xl`). Card: lazy `aspect-video` image with fallback, source badge, category, relative time, title (2-line clamp), description (3-line clamp), author.
 - **Every async view** has a skeleton, an empty state (+ clear filters), an error state (+ retry) and partial-error chips.
-- **Search with no keyword** (`/search` with empty `q`) shows the latest articles from the selected sources with the other filters applied, plus a prompt to type a keyword. It is never a blank page.
+- **Search with no keyword** (`/search` with empty `q`) shows the latest articles from the selected sources with the other filters applied; the page subtitle says so and prompts for a keyword. It is never a blank page.
 - **Cards open the in-app reader** (`/article/$provider?id=…`) via the router's `<Link>`, never the publisher's site. No card, list or button in the app links out. The router has scroll restoration on, so Back returns to the same place in the list.
 - **Reader:** large hero image, title, byline (author · relative date · source badge · category), Follow-author button, body in a comfortable reading column (`max-w-prose`, larger line height, `text-base sm:text-lg`). Full-text sources (Guardian) render the whole body. Preview-only sources (NYT, NewsAPI) render all the text their API provides, with a short `PreviewNotice` ("{Source} only shares a preview of this article") and **no** "Continue reading" button or other call to action. Every reader page ends with a small attribution line: "Source: {source} · Original article" (the Guardian's terms require it; we apply it to all sources). Loading → skeleton matching the layout; missing article → `ReaderUnavailable` with a link back to the feed.
 - **Mobile-first:** unprefixed classes are mobile; `sm`/`md`/`lg`/`xl` only enlarge. Default breakpoints only; no `max-*:` variants or media queries in components. Container queries (`@container`) for components whose layout depends on placement.

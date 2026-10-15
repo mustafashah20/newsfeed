@@ -1,6 +1,7 @@
 import { format, parseISO } from 'date-fns';
+import type { DateRange } from 'react-day-picker';
 
-import { daysAgo } from '@/lib/date';
+import { daysAgo, toDayString } from '@/lib/date';
 
 // The APIs filter by whole days, so "Past 24 hours" starts at yesterday's date.
 export const DATE_PRESETS = [
@@ -27,6 +28,18 @@ export function detectPreset({ from, to }: DayRange, now = new Date()): DatePres
   if (to) return 'custom';
   const match = DATE_PRESETS.find((p) => p.days !== null && from === daysAgo(p.days, now));
   return match?.id ?? 'custom';
+}
+
+/** The applied range as the calendar's selection, so a picker opens on what's applied. */
+export function toPickerRange({ from, to }: DayRange): DateRange | undefined {
+  if (!from) return undefined;
+  return { from: parseISO(from), to: to ? parseISO(to) : undefined };
+}
+
+/** A calendar selection as a day range; a single picked day is a one-day range. */
+export function fromPickerRange(range: DateRange | undefined): DayRange | null {
+  if (!range?.from) return null;
+  return { from: toDayString(range.from), to: toDayString(range.to ?? range.from) };
 }
 
 const day = (value: string) => format(parseISO(value), 'd MMM yyyy');

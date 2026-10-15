@@ -1,9 +1,9 @@
+import { CategoryPicker } from '@/components/common/CategoryPicker';
 import type { Category } from '@/services/news/categories';
 import { NEWSAPI_MAX_CATEGORIES } from '@/services/news/providers/newsapi/client';
 import type { ProviderId } from '@/services/news/types';
 
 import { AuthorInput } from './AuthorInput';
-import { CategoryPicker } from './CategoryPicker';
 import { PreferencesSection } from './PreferencesSection';
 import { SourceToggles } from './SourceToggles';
 

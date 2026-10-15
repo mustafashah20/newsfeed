@@ -1,5 +1,4 @@
 import { CalendarIcon } from 'lucide-react';
-import { parseISO } from 'date-fns';
 import { useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 
@@ -13,9 +12,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { toDayString } from '@/lib/date';
 
-import { DATE_PRESETS, describeRange, detectPreset, presetRange } from '../lib/date-presets';
+import {
+  DATE_PRESETS,
+  describeRange,
+  detectPreset,
+  fromPickerRange,
+  presetRange,
+  toPickerRange,
+} from '../lib/date-presets';
 import type { DayRange } from '../lib/date-presets';
 
 const CUSTOM = 'custom';
@@ -57,14 +62,14 @@ export function DateRangeFilter({
 
   function handleOpenChange(next: boolean) {
     // Start from the applied range each time the picker opens.
-    if (next)
-      setDraft(from ? { from: parseISO(from), to: to ? parseISO(to) : undefined } : undefined);
+    if (next) setDraft(toPickerRange({ from, to }));
     setOpen(next);
   }
 
   function handleApply() {
-    if (!draft?.from) return;
-    onChange({ from: toDayString(draft.from), to: toDayString(draft.to ?? draft.from) });
+    const range = fromPickerRange(draft);
+    if (!range) return;
+    onChange(range);
     setOpen(false);
   }
 
