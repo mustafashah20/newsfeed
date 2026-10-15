@@ -1,5 +1,4 @@
-import { authorKey } from '@/lib/authors';
-import { normalizeAuthor } from '@/lib/text';
+import { authorKey, toAuthorName } from '@/lib/authors';
 import { CATEGORIES } from '@/services/news/categories';
 import type { Category } from '@/services/news/categories';
 import { PROVIDER_IDS } from '@/services/news/types';
@@ -24,7 +23,7 @@ export function orderCategories(categories: readonly Category[]): Category[] {
 
 /** The new list, or null when the name is empty or already in the list. */
 export function addAuthor(authors: readonly string[], name: string): string[] | null {
-  const author = normalizeAuthor(name);
+  const author = toAuthorName(name);
   if (!author) return null;
   if (authors.some((a) => authorKey(a) === authorKey(author))) return null;
   return [...authors, author];

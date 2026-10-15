@@ -128,4 +128,22 @@ describe('preferences store', () => {
 
     expect(state().authors).toEqual(['jane doe', 'Bo Kim']);
   });
+
+  it('repairs authors the old Follow button split out of a live-blog byline', async () => {
+    // What following "Jakub Krupa (now and earlier) and Martin Belam (earlier)" used to store.
+    await rehydrateFrom({
+      version: 1,
+      state: {
+        authors: ['Jakub Krupa (now', 'earlier)', 'Martin Belam (earlier)', 'Graeme Wearden'],
+      },
+    });
+
+    expect(state().authors).toEqual(['Jakub Krupa', 'Martin Belam', 'Graeme Wearden']);
+  });
+
+  it('stores a typed name without its byline note', () => {
+    expect(state().addAuthor('Martin Belam (earlier)')).toBe(true);
+    expect(state().authors).toEqual(['Martin Belam']);
+    expect(state().addAuthor('martin belam')).toBe(false);
+  });
 });

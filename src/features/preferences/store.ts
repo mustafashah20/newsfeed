@@ -2,8 +2,7 @@ import { z } from 'zod';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { authorKey } from '@/lib/authors';
-import { normalizeAuthor } from '@/lib/text';
+import { authorKey, toAuthorName } from '@/lib/authors';
 import { CATEGORIES } from '@/services/news/categories';
 import type { Category } from '@/services/news/categories';
 import { PROVIDER_IDS } from '@/services/news/types';
@@ -123,10 +122,12 @@ export const usePreferences = create<PreferencesState>()(
       merge: (persisted, current) => {
         const parsed = persistedSchema.safeParse(persisted ?? {});
         if (!parsed.success) return current;
-        // Re-normalize authors and drop duplicates, whatever was stored.
+        // Re-normalize authors and drop duplicates, whatever was stored. This also repairs names
+        // that the old Follow button split out of live-blog bylines ("Jakub Krupa (now",
+        // "earlier)").
         const authors: string[] = [];
         for (const raw of parsed.data.authors) {
-          const author = normalizeAuthor(raw);
+          const author = toAuthorName(raw);
           if (author && !authors.some((a) => authorKey(a) === authorKey(author))) {
             authors.push(author);
           }
