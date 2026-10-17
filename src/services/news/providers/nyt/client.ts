@@ -1,4 +1,4 @@
-import { toCompactDate } from '@/lib/date';
+import { toCompactDate } from '@/lib/date-format';
 
 import { toProviderCategory } from '../../categories';
 import { createApiClient } from '../../http';

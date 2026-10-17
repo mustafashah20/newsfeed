@@ -1,7 +1,8 @@
 import { format, parseISO } from 'date-fns';
 import type { DateRange } from 'react-day-picker';
 
-import { daysAgo, toDayString } from '@/lib/date';
+import { toDayString } from '@/lib/date-format';
+import { daysAgo } from '@/lib/day-range';
 
 // The APIs filter by whole days, so "Past 24 hours" starts at yesterday's date.
 export const DATE_PRESETS = [

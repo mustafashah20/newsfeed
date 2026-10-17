@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { toHttpUrl } from './url';
+import { toHttpUrl } from './safe-url';
 
 describe('toHttpUrl', () => {
   it('accepts absolute http(s) URLs and resolves relative ones against a base', () => {

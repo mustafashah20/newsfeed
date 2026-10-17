@@ -6,7 +6,7 @@ import { PAGE_STACK_CLASS } from '@/components/layout/page-styles';
 import { Button } from '@/components/ui/button';
 import { ReaderLink, SourceStatusBar, useAggregatedArticles } from '@/features/articles';
 import { PreferencesDialog, useEditablePreferences } from '@/features/preferences';
-import { formatDayHeading } from '@/lib/date';
+import { formatDayHeading } from '@/lib/date-format';
 import { categoryLabel } from '@/services/news/categories';
 import { providers } from '@/services/news/registry';
 

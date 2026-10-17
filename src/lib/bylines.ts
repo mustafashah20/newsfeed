@@ -1,4 +1,12 @@
-import { normalizeAuthor } from './text';
+import { nonEmpty } from './text-cleanup';
+
+/** "By Jane Doe" / "by  Jane Doe " → "Jane Doe"; empty → null. */
+export function normalizeAuthor(value: string | null | undefined): string | null {
+  const text = nonEmpty(value);
+  if (text === null) return null;
+  // A bare "By" (after trimming "By ") counts as empty; "Byron" is a name.
+  return nonEmpty(text.replace(/^by(?:\s+|$)/i, ''));
+}
 
 // Guardian live blogs credit with notes in brackets: "Jakub Krupa (now and earlier) and Martin
 // Belam (earlier)". The notes aren't part of anyone's name, and their own "and" must not split.

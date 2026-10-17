@@ -87,7 +87,9 @@ src/
 ├── components/     ui/ (shadcn, generated) · layout/ (AppShell, Header, MobileNav, PageHeader)
 │                   · common/ (shared by 2+ features: CategoryPicker)
 ├── hooks/          generic hooks (useMediaQuery, useDebouncedValue)
-├── lib/            utils.ts (cn), date.ts, text.ts
+├── lib/            utils.ts (cn only, path fixed by shadcn), date-format.ts, day-range.ts,
+│                   text-cleanup.ts, bylines.ts, safe-url.ts, list-equality.ts, type-guards.ts,
+│                   page-title.ts — one job per file, named after it; no catch-all utils
 └── test/           setup.ts, msw/handlers.ts, fixtures/, render.tsx
 ```
 Root: `AGENTS.md`, `CLAUDE.md`, `.claude/settings.json` (denies reading `.env`), `docs/`, `nginx/default.conf.template`, `Dockerfile`, `docker-compose.yml`, `.env.example`. Alias `@/*` → `src/*` (set in both tsconfigs and `vite.config.ts` before `shadcn init`).
@@ -101,7 +103,7 @@ Root: `AGENTS.md`, `CLAUDE.md`, `.claude/settings.json` (denies reading `.env`),
 | A styling primitive | `npx shadcn@latest add` → `components/ui/`; wrap in `common/` for extra behavior |
 | App chrome | `components/layout/` |
 | Feature logic / generic hook | `features/<f>/hooks/` / `src/hooks/` |
-| Feature helpers / generic helpers | `features/<f>/lib/` / `src/lib/` |
+| Feature helpers / generic helpers | `features/<f>/lib/` / `src/lib/<what-it-does>.ts` (never into `utils.ts`) |
 | Feature types or constants | `features/<f>/types.ts`, `constants.ts` |
 | Anything about a news API | `services/news/` |
 | A test | Next to its source (`x.ts` → `x.test.ts`); shared helpers in `src/test/` |

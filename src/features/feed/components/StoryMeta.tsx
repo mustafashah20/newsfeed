@@ -1,4 +1,4 @@
-import { formatFullDate, timeAgo } from '@/lib/date';
+import { formatFullDate, timeAgo } from '@/lib/date-format';
 import { cn } from '@/lib/utils';
 import { categoryLabel } from '@/services/news/categories';
 import type { Article } from '@/services/news/types';

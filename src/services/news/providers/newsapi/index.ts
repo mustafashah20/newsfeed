@@ -2,8 +2,8 @@
 // (one per request) but no dates, so those are filtered client-side; free plan: 100 req/day,
 // first 100 results only, ~24 h delay, 30-day window; "[Removed]" placeholder items; content is
 // truncated with "[+N chars]"; no id field (the URL is the id); short pages happen.
-import { isWithinDays } from '@/lib/date';
-import { isPresent } from '@/lib/utils';
+import { isWithinDays } from '@/lib/day-range';
+import { isPresent } from '@/lib/type-guards';
 
 import { parseResponse } from '../../http';
 import type { NewsProvider, ProviderPage } from '../../types';

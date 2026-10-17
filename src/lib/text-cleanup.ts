@@ -24,11 +24,3 @@ export function htmlToText(html: string | null | undefined): string | null {
   });
   return nonEmpty(doc.body.textContent);
 }
-
-/** "By Jane Doe" / "by  Jane Doe " → "Jane Doe"; empty → null. */
-export function normalizeAuthor(value: string | null | undefined): string | null {
-  const text = nonEmpty(value);
-  if (text === null) return null;
-  // A bare "By" (after trimming "By ") counts as empty; "Byron" is a name.
-  return nonEmpty(text.replace(/^by(?:\s+|$)/i, ''));
-}

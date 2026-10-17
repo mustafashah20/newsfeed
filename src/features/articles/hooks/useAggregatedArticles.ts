@@ -1,7 +1,7 @@
 import { useQueries, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { isByPreferredAuthor } from '@/lib/authors';
+import { isByPreferredAuthor } from '@/lib/bylines';
 import { articleKeys, normalizeQuery } from '@/services/news/query-keys';
 import { providers } from '@/services/news/registry';
 import type { Article, ProviderId, ProviderPage, ProviderQuery } from '@/services/news/types';

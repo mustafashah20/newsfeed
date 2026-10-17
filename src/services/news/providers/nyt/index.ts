@@ -2,7 +2,7 @@
 // and capped at 100; fixed 10 docs per page; hits caps at 10000; categories filter via
 // fq=section.name:(…); no lead_paragraph in current responses; byline starts with "By ".
 // No full text: the reader gets the preview, looked up by _id only when nothing is cached.
-import { isPresent } from '@/lib/utils';
+import { isPresent } from '@/lib/type-guards';
 
 import { ApiError, parseResponse } from '../../http';
 import { toPreviewDetail } from '../../preview';

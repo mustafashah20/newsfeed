@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { sameList } from '@/lib/array';
+import { sameList } from '@/lib/list-equality';
 import { CATEGORIES, categoryLabel } from '@/services/news/categories';
 import type { Category } from '@/services/news/categories';
 import { NEWSAPI_MAX_CATEGORIES } from '@/services/news/providers/newsapi/client';

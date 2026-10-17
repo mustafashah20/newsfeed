@@ -2,7 +2,7 @@
 // show-fields is required for trailText/thumbnail/byline; trailText is HTML; ids contain
 // slashes; results include liveblogs; attribution ("The Guardian" + webUrl) is required.
 // The only source with full text: GET /{id}?show-fields=body (response.content, not results).
-import { isPresent } from '@/lib/utils';
+import { isPresent } from '@/lib/type-guards';
 
 import { ApiError, parseResponse } from '../../http';
 import type { ArticleDetailSource, NewsProvider } from '../../types';

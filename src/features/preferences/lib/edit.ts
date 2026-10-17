@@ -1,4 +1,4 @@
-import { authorKey, toAuthorName } from '@/lib/authors';
+import { authorKey, toAuthorName } from '@/lib/bylines';
 import { CATEGORIES } from '@/services/news/categories';
 import type { Category } from '@/services/news/categories';
 import { PROVIDER_IDS } from '@/services/news/types';

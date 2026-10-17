@@ -1,8 +1,23 @@
 import { describe, expect, it } from 'vitest';
 
-import { authorKey, isByPreferredAuthor, splitAuthors, toAuthorName } from './authors';
+import {
+  authorKey,
+  isByPreferredAuthor,
+  normalizeAuthor,
+  splitAuthors,
+  toAuthorName,
+} from './bylines';
 
-describe('author helpers', () => {
+describe('byline helpers', () => {
+  it('removes "By" and spacing from a byline', () => {
+    expect(normalizeAuthor('By Phillip Horton')).toBe('Phillip Horton');
+    expect(normalizeAuthor('  by   Jane  Doe ')).toBe('Jane Doe');
+    expect(normalizeAuthor('Peter Bradshaw')).toBe('Peter Bradshaw');
+    expect(normalizeAuthor('Byron Smith')).toBe('Byron Smith');
+    expect(normalizeAuthor('By ')).toBeNull();
+    expect(normalizeAuthor(null)).toBeNull();
+  });
+
   it('splits multi-author bylines into normalized names', () => {
     expect(splitAuthors('Rachel Roubein, Daniel Wu')).toEqual(['Rachel Roubein', 'Daniel Wu']);
     expect(splitAuthors('By Jane Doe and John Roe')).toEqual(['Jane Doe', 'John Roe']);

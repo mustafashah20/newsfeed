@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { ArticleImage } from '@/features/articles';
-import { formatFullDate, timeAgo } from '@/lib/date';
+import { formatFullDate, timeAgo } from '@/lib/date-format';
 import { categoryLabel } from '@/services/news/categories';
 import type { Article } from '@/services/news/types';
 

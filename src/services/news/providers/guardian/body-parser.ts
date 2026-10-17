@@ -1,4 +1,4 @@
-import { collapseWhitespace } from '@/lib/text';
+import { collapseWhitespace } from '@/lib/text-cleanup';
 
 import type { ArticleBlock } from '../../types';
 

@@ -2,7 +2,7 @@ import type { ComponentType, ReactNode } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { formatFullDate, timeAgo } from '@/lib/date';
+import { formatFullDate, timeAgo } from '@/lib/date-format';
 import { categoryLabel } from '@/services/news/categories';
 import type { Article } from '@/services/news/types';
 

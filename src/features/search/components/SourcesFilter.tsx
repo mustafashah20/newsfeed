@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { sameList } from '@/lib/array';
+import { sameList } from '@/lib/list-equality';
 import { providerList, providers } from '@/services/news/registry';
 import { PROVIDER_IDS } from '@/services/news/types';
 import type { ProviderId } from '@/services/news/types';

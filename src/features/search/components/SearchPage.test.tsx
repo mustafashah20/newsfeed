@@ -2,7 +2,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it } from 'vitest';
 
-import { daysAgo } from '@/lib/date';
+import { daysAgo } from '@/lib/day-range';
 import guardianSearch from '@/test/fixtures/guardian/search.json';
 import newsapiEverything from '@/test/fixtures/newsapi/everything.json';
 import nytSearch from '@/test/fixtures/nyt/articlesearch.json';

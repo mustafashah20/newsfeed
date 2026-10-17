@@ -1,6 +1,7 @@
-import { toIsoDateTime } from '@/lib/date';
-import { htmlToText, nonEmpty, normalizeAuthor } from '@/lib/text';
-import { toHttpUrl } from '@/lib/url';
+import { toIsoDateTime } from '@/lib/date-format';
+import { normalizeAuthor } from '@/lib/bylines';
+import { htmlToText, nonEmpty } from '@/lib/text-cleanup';
+import { toHttpUrl } from '@/lib/safe-url';
 
 import type { Category } from '../../categories';
 import type { Article } from '../../types';

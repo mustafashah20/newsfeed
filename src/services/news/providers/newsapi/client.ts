@@ -1,4 +1,4 @@
-import { daysAgo, laterDay } from '@/lib/date';
+import { daysAgo, laterDay } from '@/lib/day-range';
 
 import { toProviderCategory } from '../../categories';
 import type { Category } from '../../categories';
