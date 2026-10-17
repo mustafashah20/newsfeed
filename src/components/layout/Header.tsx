@@ -3,8 +3,8 @@ import { NewspaperIcon } from 'lucide-react';
 
 import { HeaderSearch } from './HeaderSearch';
 
-// Just the wordmark (→ feed) and the search bar: Preferences is on the feed, beside the chips,
-// and below md the bottom tab bar (MobileNav) replaces the search bar.
+// Just the wordmark (→ feed) and the search button: Preferences is on the feed, beside the chips,
+// and below md the bottom tab bar (MobileNav) replaces the search button.
 export function Header() {
   const matchRoute = useMatchRoute();
   // The search page has its own search bar; a second one in the header is redundant there.
@@ -24,10 +24,8 @@ export function Header() {
           />
           Newsfeed
         </Link>
-        {/* Below md the Search tab replaces the bar. */}
-        {isSearchPage ? null : (
-          <HeaderSearch className="ml-auto hidden min-w-0 flex-1 md:flex md:max-w-105" />
-        )}
+        {/* Below md the Search tab replaces the button. */}
+        {isSearchPage ? null : <HeaderSearch className="ml-auto hidden md:inline-flex" />}
       </div>
     </header>
   );

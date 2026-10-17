@@ -50,15 +50,16 @@ describe('keyboard', () => {
     });
   });
 
-  it('submits a search from the header with Enter', async () => {
+  it('opens the search page from the header search button with Enter', async () => {
     const { user, router } = renderApp('/');
-    const box = await screen.findByRole('searchbox', { name: 'Search news' });
 
-    box.focus();
-    await user.keyboard('climate{Enter}');
+    (
+      await within(await screen.findByRole('banner')).findByRole('link', { name: 'Search' })
+    ).focus();
+    await user.keyboard('{Enter}');
 
     await waitFor(() => {
-      expect(router.state.location.search).toMatchObject({ q: 'climate' });
+      expect(router.state.location.pathname).toBe('/search');
     });
   });
 
